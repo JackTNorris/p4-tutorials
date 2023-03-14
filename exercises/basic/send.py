@@ -62,7 +62,7 @@ def generate_packet(time, voltage, angle, settings={"pmu_measurement_bytes": 8, 
         stat + phasors + freq + dfreq + analog + digital + chk
 
     # Set the destination IP address and port number
-    destination_ip = '127.0.0.1'
+    destination_ip = '10.0.2.2'
     destination_port = 4712
 
     # Create a UDP socket
