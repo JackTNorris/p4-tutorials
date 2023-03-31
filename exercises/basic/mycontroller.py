@@ -32,7 +32,7 @@ def main():
 
 def listen_for_digests(controller):
     sub = nnpy.Socket(nnpy.AF_SP, nnpy.SUB)
-    socket = controller.clietn.bm_mgmt_get_info().notifications_socket
+    socket = controller.client.bm_mgmt_get_info().notifications_socket
     sub.connect(socket)
     sub.setsockopt(nnpy.SUB, nnpy.SUB_SUBSCRIBE, '')
     while True:
@@ -44,4 +44,4 @@ def on_message_recv(msg, controller):
     msg = msg[32:]
     offset = 8
 
-
+main()
