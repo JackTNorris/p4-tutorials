@@ -44,4 +44,4 @@ def on_message_recv(msg, controller):
     msg = msg[32:]
     offset = 8
 
-
+main()
