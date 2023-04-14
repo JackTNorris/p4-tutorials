@@ -3,7 +3,7 @@
 #include <v1model.p4>
 
 const bit<16> TYPE_IPV4 = 0x800;
-const bit<16> TYPE_PMU = 0xaa01;
+const bit<8> TYPE_UDP = 0x11;
 
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
@@ -17,13 +17,6 @@ header ethernet_t {
     macAddr_t dstAddr;
     macAddr_t srcAddr;
     bit<16>   etherType;
-}
-
-header udp_t{
-  bit<16> srcPort;
-  bit<16> desPort;
-  bit<16> len;
-  bit<16> checksum;
 }
 
 header ipv4_t {
@@ -40,7 +33,13 @@ header ipv4_t {
     ip4Addr_t srcAddr;
     ip4Addr_t dstAddr;
 }
-//for now, we'll assume 1 PMU with 8byte representations for voltage + phase_angle
+
+header udp_t{
+  bit<16> srcPort;
+  bit<16> desPort;
+  bit<16> len;
+  bit<16> checksum;
+}
 header pmu_t {
     bit<16>   sync;
     bit<16>   frame_size;
@@ -59,7 +58,8 @@ header pmu_t {
 struct headers {
     ethernet_t   ethernet;
     ipv4_t       ipv4;
-    pmu_t        pmu;
+    udp_t          udp;
+    pmu_t           pmu;
 }
 
 struct controller_pmu_packet {
@@ -102,26 +102,27 @@ parser MyParser(packet_in packet,
         }
     }
 
-   state parse_ipv4{
+    state parse_ipv4 {
         packet.extract(hdr.ipv4);
         transition select(hdr.ipv4.protocol){
-          17: parse_udp;
-          default: accept;
+            TYPE_UDP: parse_udp;
+            default: accept;
         }
     }
 
-    state parse_udp{
-      packet.extract(hdr.udp);
-      transition select(hdr.udp.desPort){
-          4712: parse_pmu;
-          default: accept;
-      }
+    state parse_udp {
+        packet.extract(hdr.udp);
+        transition select(hdr.udp.desPort){
+            4712: parse_pmu;
+            default: accept;
+        }
     }
 
     state parse_pmu {
         packet.extract(hdr.pmu);
         transition accept;
     }
+
 
 }
 
@@ -138,13 +139,6 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
 **************  I N G R E S S   P R O C E S S I N G   *******************
 *************************************************************************/
 
-control MyControlPlane {
-    packet_in my_packet_in_handler(packet_in pkt) {
-        // Handle packet in the control plane
-        return pkt;
-    }
-}
-
 control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
@@ -152,7 +146,14 @@ control MyIngress(inout headers hdr,
         mark_to_drop(standard_metadata);
     }
 
-    action send_to_control_plane() {
+    action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
+        standard_metadata.egress_spec = port;
+        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+        hdr.ethernet.dstAddr = dstAddr;
+        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
+    }
+
+    action send_pmu_to_control_plane() {
         // put pmu info into metadata
         meta.jpt_packet.sync = hdr.pmu.sync;
         meta.jpt_packet.frame_size = hdr.pmu.frame_size;
@@ -169,14 +170,6 @@ control MyIngress(inout headers hdr,
         digest(1, meta.jpt_packet);
     }
 
-    action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
-        standard_metadata.egress_spec = port;
-        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
-        hdr.ethernet.dstAddr = dstAddr;
-        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
-        send_to_control_plane();
-    }
-
     table ipv4_lpm {
         key = {
             hdr.ipv4.dstAddr: lpm;
@@ -190,10 +183,20 @@ control MyIngress(inout headers hdr,
         default_action = drop();
     }
 
-    
+    table jpt_to_control_plane {
+        key = {
+            standard_metadata.ingress_port:exact;
+        }
+        actions = {
+            send_pmu_to_control_plane;
+        }
+        size = 1024;
+        default_action = send_pmu_to_control_plane();
+    }
 
     apply {
         if (hdr.ipv4.isValid()) {
+            jpt_to_control_plane.apply();
             ipv4_lpm.apply();
         }
     }
