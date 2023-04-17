@@ -35,7 +35,7 @@ parser = argparse.ArgumentParser(description='Mininet demo')
 parser.add_argument('--behavioral-exe', help='Path to behavioral executable',
                     type=str, action="store", required=True)
 parser.add_argument('--thrift-port', help='Thrift server port for table updates',
-                    type=int, action="store", default=9090)
+                    type=int, action="store", default=9080)
 parser.add_argument('--bmv2-log', help='verbose messages in log file', action="store_true")
 parser.add_argument('--cli', help="start the mininet cli", action="store_true")
 parser.add_argument('--auto-control-plane', help='enable automatic control plane population', action="store_true")

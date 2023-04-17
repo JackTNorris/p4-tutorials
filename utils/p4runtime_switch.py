@@ -28,7 +28,7 @@ from p4_mininet import SWITCH_START_TIMEOUT, P4Switch
 class P4RuntimeSwitch(P4Switch):
     "BMv2 switch with gRPC support"
     next_grpc_port = 50051
-    next_thrift_port = 9090
+    next_thrift_port = 9080
 
     def __init__(self, name, sw_path = None, json_path = None,
                  grpc_port = None,

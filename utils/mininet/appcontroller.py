@@ -22,7 +22,7 @@ class AppController:
                 entries.append(line)
         return entries
 
-    def add_entries(self, thrift_port=9090, sw=None, entries=None):
+    def add_entries(self, thrift_port=9080, sw=None, entries=None):
         assert entries
         if sw: thrift_port = sw.thrift_port
 
@@ -30,7 +30,7 @@ class AppController:
         p = subprocess.Popen(['simple_switch_CLI', '--thrift-port', str(thrift_port)], stdin=subprocess.PIPE)
         p.communicate(input='\n'.join(entries))
 
-    def read_register(self, register, idx, thrift_port=9090, sw=None):
+    def read_register(self, register, idx, thrift_port=9080, sw=None):
         if sw: thrift_port = sw.thrift_port
         p = subprocess.Popen(['simple_switch_CLI', '--thrift-port', str(thrift_port)], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = p.communicate(input="register_read %s %d" % (register, idx))
