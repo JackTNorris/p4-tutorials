@@ -4,7 +4,6 @@
 
 const bit<16> TYPE_IPV4 = 0x800;
 const bit<8> TYPE_UDP = 0x11;
-
 /*************************************************************************
 *********************** H E A D E R S  ***********************************
 *************************************************************************/
@@ -55,6 +54,11 @@ header pmu_t {
     bit<16>   chk;
 }
 
+//oold
+/*
+struct metadata {
+}
+*/
 struct headers {
     ethernet_t   ethernet;
     ipv4_t       ipv4;
@@ -76,7 +80,6 @@ struct controller_pmu_packet {
     bit<16>   digital;
     bit<16>   chk;
 }
-
 struct metadata {
     controller_pmu_packet jpt_packet;
 }
@@ -102,6 +105,13 @@ parser MyParser(packet_in packet,
         }
     }
 
+    //old
+    /*
+    state parse_ipv4 {
+        packet.extract(hdr.ipv4);
+        transition accept;
+    }
+    */
     state parse_ipv4 {
         packet.extract(hdr.ipv4);
         transition select(hdr.ipv4.protocol){
@@ -130,7 +140,7 @@ parser MyParser(packet_in packet,
 ************   C H E C K S U M    V E R I F I C A T I O N   *************
 *************************************************************************/
 
-control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
+control MyVerifyChecksum(inout headers hdr, inout metadata meta) {   
     apply {  }
 }
 
@@ -145,12 +155,9 @@ control MyIngress(inout headers hdr,
     action drop() {
         mark_to_drop(standard_metadata);
     }
-
-    action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
+    
+    action forward(egressSpec_t port) {
         standard_metadata.egress_spec = port;
-        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
-        hdr.ethernet.dstAddr = dstAddr;
-        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
     }
 
     action send_pmu_to_control_plane() {
@@ -169,13 +176,13 @@ control MyIngress(inout headers hdr,
         meta.jpt_packet.chk = hdr.pmu.chk;
         digest(1, meta.jpt_packet);
     }
-
-    table ipv4_lpm {
+    
+    table forwarding {
         key = {
-            hdr.ipv4.dstAddr: lpm;
+            standard_metadata.ingress_port:exact;
         }
         actions = {
-            ipv4_forward;
+            forward;
             drop;
             NoAction;
         }
@@ -183,6 +190,7 @@ control MyIngress(inout headers hdr,
         default_action = drop();
     }
 
+    // pmu stuff
     table jpt_to_control_plane {
         key = {
             standard_metadata.ingress_port:exact;
@@ -193,12 +201,11 @@ control MyIngress(inout headers hdr,
         size = 1024;
         default_action = send_pmu_to_control_plane();
     }
-
+    
     apply {
-        if (hdr.ipv4.isValid()) {
-            jpt_to_control_plane.apply();
-            ipv4_lpm.apply();
-        }
+        // pmu stuff
+        jpt_to_control_plane.apply();
+        forwarding.apply();
     }
 }
 
@@ -219,9 +226,9 @@ control MyEgress(inout headers hdr,
 control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
      apply {
         update_checksum(
-        hdr.ipv4.isValid(),
+            hdr.ipv4.isValid(),
             { hdr.ipv4.version,
-              hdr.ipv4.ihl,
+                  hdr.ipv4.ihl,
               hdr.ipv4.diffserv,
               hdr.ipv4.totalLen,
               hdr.ipv4.identification,

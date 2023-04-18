@@ -50,21 +50,27 @@ def listen_for_digests(controller):
     counter = 0
     while True:
         message = sub.recv()
-        print(message)
+        print(counter)
+        counter = counter+1
+        #print(message)
         #on_message_recv(message, controller)
 
 def new_listen_for_digests(controller):
     sub = nnpy.Socket(nnpy.AF_SP, nnpy.SUB)
     s = controller.client.bm_mgmt_get_info().notifications_socket
+    print("socket is : " + str(s))
     server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     server.bind(s)
-    print("socket is : " + str(s))
+
+    counter = 0
     while True:
         server.listen(1)
         conn, addr = server.accept()
         datagram = conn.recv(1024)
         if datagram:
-            on_message_recv(datagram, controller)
+            counter = counter + 1
+            print(counter)
+            #on_message_recv(datagram, controller)
             conn.close()
 
 def parse_phasors(phasor_data, settings={"num_phasors": 1, "pmu_measurement_bytes": 8}):

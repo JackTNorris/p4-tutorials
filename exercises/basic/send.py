@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import socket
 import datetime
 import math
@@ -62,7 +60,7 @@ def generate_packet(time, voltage, angle, settings={"pmu_measurement_bytes": 8, 
         stat + phasors + freq + dfreq + analog + digital + chk
 
     # Set the destination IP address and port number
-    destination_ip = '10.0.2.2'
+    destination_ip = settings["destination_ip"]
     destination_port = 4712
 
     # Create a UDP socket
@@ -82,9 +80,16 @@ if __name__ == "__main__":
         ["Magnitude01", "Magnitude02", "Magnitude03"],
         ["Angle01", "Angle02", "Angle03"]
     )
+    settings_obj = {}
+
+    if len(sys.argv) > 1 and sys.argv[1]:
+        settings_obj["destination_ip"] = sys.argv[1]
+        if len(sys.argv) > 2 and sys.argv[2]:
+            settings_obj["destination_port"] = sys.argv[1]
+
     for i in range(0, len(pmu_data["times"])):
         print(i)
         generate_packet(pmu_data["times"][i], pmu_data["magnitudes"]
-                        [0][i], pmu_data["phase_angles"][0][i])
+                        [0][i], pmu_data["phase_angles"][0][i], settings_obj)
 
     # generate_packets()
