@@ -1034,7 +1034,10 @@ control MyIngress(inout headers hdr,
     }
 
     action send_pmu_to_control_plane() {
-        R1.write(0, 90);
+        bit<256> my_counter;
+        R1.read(my_counter, 0);
+        my_counter = my_counter + 1;
+        R1.write(0, my_counter);
         // put pmu info into metadata
         meta.jpt_packet.sync = hdr.pmu.sync;
         meta.jpt_packet.frame_size = hdr.pmu.frame_size;

@@ -7,6 +7,7 @@ import socket
 import os.path
 import ipaddress
 import math
+counter = 0
 
 class SimpleSwitchAPI(runtime_CLI.RuntimeAPI):
     @staticmethod
@@ -47,13 +48,10 @@ def listen_for_digests(controller):
     sub.connect(socket)
     sub.setsockopt(nnpy.SUB, nnpy.SUB_SUBSCRIBE, '')
     #### Define the controller logic below ###
-    counter = 0
     while True:
         message = sub.recv()
-        print("GOT MESSAGE: " + str(counter))
-        counter = counter+1
         #print(message)
-        #on_message_recv(message, controller)
+        on_message_recv(message, controller)
 
 def new_listen_for_digests(controller):
     sub = nnpy.Socket(nnpy.AF_SP, nnpy.SUB)
@@ -100,7 +98,6 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
         "analog": data[analog_start_byte:digital_start_byte],
         "digital": data[digital_start_byte:],
     }
-    print("frac_sec = ", pmu_packet["frac_sec"])
 
     return pmu_packet
 
@@ -109,21 +106,12 @@ def on_message_recv(msg, controller):
     ### Insert the receiving logic below ###
     msg = msg[32:]
     pmu_packet = pmu_packet_parser(msg)
-    print(pmu_packet["sync"])
-    print(pmu_packet["frame_size"])
-    print(pmu_packet["id_code"])
-    offset = 8
-    # For listening the next digest
-    """
+    offset = 36
+    # For listening the next diges
     for m in range(num):
-        mac1, mac2, port = struct.unpack("!LHH", msg[0:offset])
-        mac_address = (mac1 << 16) + mac2
-        print("mac address:", str(mac_address), 'port:', str(port))
+        global counter
+        counter += 1
+        print(counter)
+        #pmu = struct.unpack("!LHH", msg[0:offset])
         msg = msg[offset:]
-        controller.do_table_add("mac_learn NoAction "
-                                + str(mac_address) + " => ")
-        print("forwarding forward " + str(mac_address) + " =>" + str(port))
-        controller.do_table_add("forwarding forward "
-                                + str(mac_address) + " => " + str(port) + " ")
-    """
 main()
