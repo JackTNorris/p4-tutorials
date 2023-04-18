@@ -77,6 +77,7 @@ struct controller_pmu_packet {
     bit<16>   chk;
 }
 
+
 struct metadata {
     controller_pmu_packet jpt_packet;
 }
@@ -142,18 +143,15 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
 control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
+
+    register<bit<256>>(1) R1;
+
     action drop() {
         mark_to_drop(standard_metadata);
     }
 
-    action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
-        standard_metadata.egress_spec = port;
-        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
-        hdr.ethernet.dstAddr = dstAddr;
-        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
-    }
-
     action send_pmu_to_control_plane() {
+        R1.write(0, 90);
         // put pmu info into metadata
         meta.jpt_packet.sync = hdr.pmu.sync;
         meta.jpt_packet.frame_size = hdr.pmu.frame_size;
@@ -168,6 +166,15 @@ control MyIngress(inout headers hdr,
         meta.jpt_packet.digital = hdr.pmu.digital;
         meta.jpt_packet.chk = hdr.pmu.chk;
         digest(1, meta.jpt_packet);
+    }
+
+    action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
+        R1.write(0, 80);
+        send_pmu_to_control_plane();
+        standard_metadata.egress_spec = port;
+        hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
+        hdr.ethernet.dstAddr = dstAddr;
+        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
     }
 
     table ipv4_lpm {
@@ -185,7 +192,7 @@ control MyIngress(inout headers hdr,
 
     table jpt_to_control_plane {
         key = {
-            standard_metadata.ingress_port:exact;
+
         }
         actions = {
             send_pmu_to_control_plane;
@@ -194,8 +201,10 @@ control MyIngress(inout headers hdr,
         default_action = send_pmu_to_control_plane();
     }
 
+
     apply {
         if (hdr.ipv4.isValid()) {
+            //R1.write(0, 65);
             jpt_to_control_plane.apply();
             ipv4_lpm.apply();
         }
@@ -209,7 +218,9 @@ control MyIngress(inout headers hdr,
 control MyEgress(inout headers hdr,
                  inout metadata meta,
                  inout standard_metadata_t standard_metadata) {
-    apply {  }
+    apply {
+
+    }
 }
 
 /*************************************************************************
@@ -241,6 +252,7 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
 *************************************************************************/
 
 control MyDeparser(packet_out packet, in headers hdr) {
+
     apply {
         packet.emit(hdr.ethernet);
         packet.emit(hdr.ipv4);

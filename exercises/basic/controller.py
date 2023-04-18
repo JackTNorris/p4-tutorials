@@ -50,7 +50,7 @@ def listen_for_digests(controller):
     counter = 0
     while True:
         message = sub.recv()
-        print(counter)
+        print("GOT MESSAGE: " + str(counter))
         counter = counter+1
         #print(message)
         #on_message_recv(message, controller)

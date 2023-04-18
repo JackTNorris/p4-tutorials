@@ -4,6 +4,7 @@ import math
 import struct
 import pandas as pd
 import sys
+import time
 sys.path.append('../')
 from utilities.pmu_csv_parser import parse_csv_data
 
@@ -89,6 +90,7 @@ if __name__ == "__main__":
 
     for i in range(0, len(pmu_data["times"])):
         print(i)
+        time.sleep(.5)
         generate_packet(pmu_data["times"][i], pmu_data["magnitudes"]
                         [0][i], pmu_data["phase_angles"][0][i], settings_obj)
 
