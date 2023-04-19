@@ -7,8 +7,12 @@ import socket
 import os.path
 import ipaddress
 import math
-counter = 0
+from jpt_algo_evaluation.jpt_algo import calculate_complex_voltage, jpt_algo, phase_angle_and_magnitude_from_complex_voltage, calculate_approximation_error, calculate_angle_error
+from statistics import mean, stdev
+import threading
 
+counter = 0
+buffer = []
 class SimpleSwitchAPI(runtime_CLI.RuntimeAPI):
     @staticmethod
     def get_thrift_services():
@@ -53,24 +57,6 @@ def listen_for_digests(controller):
         #print(message)
         on_message_recv(message, controller)
 
-def new_listen_for_digests(controller):
-    sub = nnpy.Socket(nnpy.AF_SP, nnpy.SUB)
-    s = controller.client.bm_mgmt_get_info().notifications_socket
-    print("socket is : " + str(s))
-    server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    server.bind(s)
-
-    counter = 0
-    while True:
-        server.listen(1)
-        conn, addr = server.accept()
-        datagram = conn.recv(1024)
-        if datagram:
-            counter = counter + 1
-            print(counter)
-            #on_message_recv(datagram, controller)
-            conn.close()
-
 def parse_phasors(phasor_data, settings={"num_phasors": 1, "pmu_measurement_bytes": 8}):
     phasor = {
         "magnitude": struct.unpack('>f', phasor_data[0:int(settings["pmu_measurement_bytes"]/2)])[0],
@@ -100,18 +86,72 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
     }
 
     return pmu_packet
+"""
+def run_nnpy_thread(q, sock):
+    # Create the thread
+    nnpy_thread = Thread(target=fetch_traffic, args=([q], [sock]))
 
+    # Start the thread and set as daemon (kills the thread once main thread ends)
+    nnpy_thread.daemon = True
+    nnpy_thread.start()
+
+def listen_for_events(q, controller):
+    while True:
+        event_data = q.get()
+        on_message_recv(event_data)
+        q.task_done()
+
+def fetch_traffic(q, sock):
+    q = q[0]
+    sock = sock[0]
+
+    # Listen for incoming datagrams
+    while(True):
+        # Receive traffic from socket
+        data = sock.recv(bufferSize)
+
+
+        # Update the queue with the message
+        q.put(data)
+"""
+
+mag_approx_errors = []
+angle_approx_errors = []
 def on_message_recv(msg, controller):
     _, _, ctx_id, list_id, buffer_id, num = struct.unpack("<iQiiQi", msg[:32])
     ### Insert the receiving logic below ###
     msg = msg[32:]
-    pmu_packet = pmu_packet_parser(msg)
-    offset = 36
-    # For listening the next diges
+    #pmu_packet = pmu_packet_parser(msg)
+    #offset = 36
+    offset = 8
+    # For listening the next digest
     for m in range(num):
         global counter
+        global buffer
+        global mag_approx_errors
+        global angle_approx_errors
         counter += 1
+
         print(counter)
-        #pmu = struct.unpack("!LHH", msg[0:offset])
+        pmu = parse_phasors(msg[0:offset])
+        buffer.append(calculate_complex_voltage(pmu[0]["magnitude"], pmu[0]["angle"]))
+        print("mag: " + str(pmu[0]["magnitude"]))
+        print("phase: " + str(pmu[0]["angle"]))
+        if len(mag_approx_errors) > 0 and len(angle_approx_errors) > 0:
+            print("Mean mag error: " + str(mean(mag_approx_errors)))
+            print("Mean angle error: " + str(mean(angle_approx_errors)))
+        if counter % 3 == 0 and counter != 0:
+            complex_voltage_estimate = jpt_algo(buffer[2], buffer[1], buffer[0])
+            mag, pa = phase_angle_and_magnitude_from_complex_voltage(complex_voltage_estimate)
+            buffer = []
+            predicted_magnitude = mag
+            predicted_pa = pa
+            mag_approx_errors.append(calculate_approximation_error(pmu[0]["magnitude"], predicted_magnitude))
+            angle_approx_errors.append(calculate_angle_error(pmu[0]["angle"], predicted_pa))
+        if counter % 4 == 0 and counter != 0:
+            x = 5
+            #print("Approximation error for magnitude: ", calculate_approximation_error(pmu[0]["magnitude"] , predicted_magnitude))
+            #print("Approximation angle error for angle: ", calculate_angle_error(pmu[0]["angle"], predicted_pa))
+        #print(str(counter) + " : " + str(pmu[0]["magnitude"]))
         msg = msg[offset:]
 main()

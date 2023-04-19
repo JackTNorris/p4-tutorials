@@ -55,6 +55,7 @@ if __name__ == "__main__":
         counter += 1
         # print float value of pmu_packet_parser(data)["frame_size"]
         pmu_data = pmu_packet_parser(data)
+        print(counter)
         print("Magnitude: ", pmu_data["phasors"][0]["magnitude"])
         print("Angle: ", pmu_data["phasors"][0]["angle"])
         """

@@ -63,18 +63,22 @@ struct headers {
 }
 
 struct controller_pmu_packet {
+  /*
     bit<16>   sync;
     bit<16>   frame_size;
     bit<16>   id_code;
     bit<32>   soc;
     bit<32>   fracsec;
     bit<16>   stat;
+  */
     bit<64>   phasors;
+  /*
     bit<16>   freq;
     bit<16>   dfreq;
     bit<32>   analog;
     bit<16>   digital;
     bit<16>   chk;
+  */
 }
 
 
@@ -151,23 +155,29 @@ control MyIngress(inout headers hdr,
     }
 
     action send_pmu_to_control_plane() {
+        /*
         bit<256> my_counter;
         R1.read(my_counter, 0);
         my_counter = my_counter + 1;
         R1.write(0, my_counter);
+        */
         // put pmu info into metadata
+        /*
         meta.jpt_packet.sync = hdr.pmu.sync;
         meta.jpt_packet.frame_size = hdr.pmu.frame_size;
         meta.jpt_packet.id_code = hdr.pmu.id_code;
         meta.jpt_packet.soc = hdr.pmu.soc;
         meta.jpt_packet.fracsec = hdr.pmu.fracsec;
         meta.jpt_packet.stat = hdr.pmu.stat;
+        */
         meta.jpt_packet.phasors = hdr.pmu.phasors;
+        /*
         meta.jpt_packet.freq = hdr.pmu.freq;
         meta.jpt_packet.dfreq = hdr.pmu.dfreq;
         meta.jpt_packet.analog = hdr.pmu.analog;
         meta.jpt_packet.digital = hdr.pmu.digital;
         meta.jpt_packet.chk = hdr.pmu.chk;
+        */
         digest(1, meta.jpt_packet);
     }
 
@@ -207,7 +217,6 @@ control MyIngress(inout headers hdr,
 
     apply {
         if (hdr.ipv4.isValid()) {
-            //R1.write(0, 65);
             jpt_to_control_plane.apply();
             ipv4_lpm.apply();
         }

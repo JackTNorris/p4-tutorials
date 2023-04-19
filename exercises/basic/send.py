@@ -82,14 +82,14 @@ if __name__ == "__main__":
         ["Angle01", "Angle02", "Angle03"]
     )
     settings_obj = {}
-
     if len(sys.argv) > 1 and sys.argv[1]:
         settings_obj["destination_ip"] = sys.argv[1]
         if len(sys.argv) > 2 and sys.argv[2]:
             settings_obj["destination_port"] = sys.argv[1]
 
     for i in range(0, len(pmu_data["times"])):
-        print(i)
+        print(i + 1)
+        time.sleep(0.05)
         generate_packet(pmu_data["times"][i], pmu_data["magnitudes"]
                         [0][i], pmu_data["phase_angles"][0][i], settings_obj)
 
