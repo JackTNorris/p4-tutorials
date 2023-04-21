@@ -1032,9 +1032,9 @@ control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
 
-    register<bit<128>>(1) R1;
-    register<bit<128>>(1) R2;
-    register<bit<128>>(1) R3;
+    register<bit<32>>(3) R1;
+    //register<bit<128>>(1) R2;
+    //register<bit<128>>(1) R3;
 
     action drop() {
         mark_to_drop(standard_metadata);
@@ -1061,15 +1061,15 @@ control MyIngress(inout headers hdr,
         meta.jpt_packet.soc = hdr.pmu.soc;
         meta.jpt_packet.fracsec = hdr.pmu.fracsec;
 
-        bit<128> new_reg3;
-        bit<128> new_reg2;
+        bit<32> new_reg3;
+        bit<32> new_reg2;
 
-        R2.read(new_reg3, 0);
-        R1.read(new_reg2, 0);
+        R1.read(new_reg3, (bit<32>)1);
+        R1.read(new_reg2, (bit<32>)0);
 
-        R1.write(0, meta.jpt_packet.soc ++ meta.jpt_packet.fracsec ++ meta.jpt_packet.phasors);
-        R2.write(0, 200);
-        R3.write(0, 300);
+        R1.write((bit<32>)2, new_reg3);
+        R1.write((bit<32>)1, new_reg2);
+        R1.write((bit<32>)0, hdr.pmu.fracsec);
         /*
         meta.jpt_packet.freq = hdr.pmu.freq;
         meta.jpt_packet.dfreq = hdr.pmu.dfreq;
@@ -1081,8 +1081,6 @@ control MyIngress(inout headers hdr,
     }
 
     action ipv4_forward(macAddr_t dstAddr, egressSpec_t port) {
-        R1.write(0, 80);
-        send_pmu_to_control_plane();
         standard_metadata.egress_spec = port;
         hdr.ethernet.srcAddr = hdr.ethernet.dstAddr;
         hdr.ethernet.dstAddr = dstAddr;

@@ -135,6 +135,7 @@ def on_message_recv(msg, controller):
         print(counter)
         pmu = parse_phasors(msg[8:offset])
         buffer.append(calculate_complex_voltage(pmu[0]["magnitude"], pmu[0]["angle"]))
+        print("frac: " + str(int.from_bytes(msg[4:8], byteorder="big")))
         print("mag: " + str(pmu[0]["magnitude"]))
         print("phase: " + str(pmu[0]["angle"]))
         if len(mag_approx_errors) > 0 and len(angle_approx_errors) > 0:
