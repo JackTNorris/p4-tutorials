@@ -123,7 +123,7 @@ def on_message_recv(msg, controller):
     msg = msg[32:]
     #pmu_packet = pmu_packet_parser(msg)
     #offset = 36
-    offset = 8
+    offset = 16
     # For listening the next digest
     for m in range(num):
         global counter
@@ -133,7 +133,7 @@ def on_message_recv(msg, controller):
         counter += 1
 
         print(counter)
-        pmu = parse_phasors(msg[0:offset])
+        pmu = parse_phasors(msg[8:offset])
         buffer.append(calculate_complex_voltage(pmu[0]["magnitude"], pmu[0]["angle"]))
         print("mag: " + str(pmu[0]["magnitude"]))
         print("phase: " + str(pmu[0]["angle"]))

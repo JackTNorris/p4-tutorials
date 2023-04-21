@@ -950,10 +950,11 @@ struct controller_pmu_packet {
     bit<16>   sync;
     bit<16>   frame_size;
     bit<16>   id_code;
-    bit<32>   soc;
-    bit<32>   fracsec;
-    bit<16>   stat;
   */
+    bit<32> soc;
+    bit<32> fracsec;
+  //bit<16>   stat;
+
     bit<64> phasors;
   /*
     bit<16>   freq;
@@ -1031,7 +1032,9 @@ control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
 
-    register<bit<256>>(1) R1;
+    register<bit<128>>(1) R1;
+    register<bit<128>>(1) R2;
+    register<bit<128>>(1) R3;
 
     action drop() {
         mark_to_drop(standard_metadata);
@@ -1046,14 +1049,27 @@ control MyIngress(inout headers hdr,
         */
         // put pmu info into metadata
         /*
+
+
+
         meta.jpt_packet.sync = hdr.pmu.sync;
         meta.jpt_packet.frame_size = hdr.pmu.frame_size;
         meta.jpt_packet.id_code = hdr.pmu.id_code;
-        meta.jpt_packet.soc = hdr.pmu.soc;
-        meta.jpt_packet.fracsec = hdr.pmu.fracsec;
         meta.jpt_packet.stat = hdr.pmu.stat;
         */
         meta.jpt_packet.phasors = hdr.pmu.phasors;
+        meta.jpt_packet.soc = hdr.pmu.soc;
+        meta.jpt_packet.fracsec = hdr.pmu.fracsec;
+
+        bit<128> new_reg3;
+        bit<128> new_reg2;
+
+        R2.read(new_reg3, 0);
+        R1.read(new_reg2, 0);
+
+        R1.write(0, meta.jpt_packet.soc ++ meta.jpt_packet.fracsec ++ meta.jpt_packet.phasors);
+        R2.write(0, 200);
+        R3.write(0, 300);
         /*
         meta.jpt_packet.freq = hdr.pmu.freq;
         meta.jpt_packet.dfreq = hdr.pmu.dfreq;
