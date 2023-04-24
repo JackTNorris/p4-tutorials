@@ -149,15 +149,14 @@ control MyIngress(inout headers hdr,
     bit<32> new_reg3;
     bit<32> new_reg2;
 
+    bit<32> temp_mag;
+    bit<32> temp_ang;
+
     action drop() {
         mark_to_drop(standard_metadata);
     }
 
-    action send_pmu_to_control_plane() {
-        meta.jpt_packet.phasors = (bit<64>)hdr.pmu.phasors;
-        meta.jpt_packet.soc = hdr.pmu.soc;
-        meta.jpt_packet.fracsec = hdr.pmu.fracsec;
-
+    action update_registers() {
         frac_sec_regs.read(new_reg3, (bit<32>)1);
         frac_sec_regs.read(new_reg2, (bit<32>)0);
         frac_sec_regs.write((bit<32>)2, new_reg3);
@@ -170,19 +169,25 @@ control MyIngress(inout headers hdr,
         soc_regs.write((bit<32>)1, new_reg2);
         soc_regs.write((bit<32>)0, hdr.pmu.soc);
 
-
         magnitude_regs.read(new_reg3, (bit<32>)1);
         magnitude_regs.read(new_reg2, (bit<32>)0);
         magnitude_regs.write((bit<32>)2, new_reg3);
         magnitude_regs.write((bit<32>)1, new_reg2);
         magnitude_regs.write((bit<32>)0, (bit<32>)(hdr.pmu.phasors >> 32));
-        
+
         phase_angle_regs.read(new_reg3, (bit<32>)1);
         phase_angle_regs.read(new_reg2, (bit<32>)0);
         phase_angle_regs.write((bit<32>)2, new_reg3);
         phase_angle_regs.write((bit<32>)1, new_reg2);
         phase_angle_regs.write((bit<32>)0, (bit<32>)hdr.pmu.phasors);
+    }
 
+    action send_pmu_to_control_plane() {
+        magnitude_regs.read(temp_mag, (bit<32>)0);
+        phase_angle_regs.read(temp_ang, (bit<32>)0);
+        meta.jpt_packet.phasors = temp_mag ++ temp_ang;
+        soc_regs.read(meta.jpt_packet.soc, (bit<32>)0);
+        frac_sec_regs.read(meta.jpt_packet.fracsec, (bit<32>)0);
         digest(1, meta.jpt_packet);
     }
 
@@ -208,6 +213,7 @@ control MyIngress(inout headers hdr,
 
     apply {
         if (hdr.ipv4.isValid()) {
+            update_registers();
             send_pmu_to_control_plane();
             ipv4_lpm.apply();
         }
