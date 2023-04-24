@@ -28,7 +28,7 @@ from p4_mininet import SWITCH_START_TIMEOUT, P4Switch
 class P4RuntimeSwitch(P4Switch):
     "BMv2 switch with gRPC support"
     next_grpc_port = 50051
-    next_thrift_port = 9080
+    next_thrift_port = 9090
 
     def __init__(self, name, sw_path = None, json_path = None,
                  grpc_port = None,
@@ -88,6 +88,7 @@ class P4RuntimeSwitch(P4Switch):
             self.device_id = P4Switch.device_id
             P4Switch.device_id += 1
         self.nanomsg = "ipc:///tmp/bm-{}-log.ipc".format(self.device_id)
+        self.notifications_socket = "ipc:///tmp/bmv2-{}-notifications.ipc".format(self.device_id)
 
 
     def check_switch_started(self, pid):
@@ -122,9 +123,13 @@ class P4RuntimeSwitch(P4Switch):
             args.append('--thrift-port ' + str(self.thrift_port))
         if self.grpc_port:
             args.append("-- --grpc-server-addr 0.0.0.0:" + str(self.grpc_port))
+        """
+        if self.notifications_socket:
+            print(self.notifications_socket)
+            args.append("-- --notifications-addr " + str(self.notifications_socket))
+        """
         cmd = ' '.join(args)
         info(cmd + "\n")
-
 
         pid = None
         with tempfile.NamedTemporaryFile() as f:
@@ -135,4 +140,3 @@ class P4RuntimeSwitch(P4Switch):
             error("P4 switch {} did not start correctly.\n".format(self.name))
             exit(1)
         info("P4 switch {} has been started.\n".format(self.name))
-

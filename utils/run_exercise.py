@@ -52,14 +52,13 @@ def configureP4Switch(**switch_args):
         return ConfiguredP4RuntimeSwitch
     else:
         class ConfiguredP4Switch(P4Switch):
-            next_thrift_port = 9080
+            next_thrift_port = 9090
             def __init__(self, *opts, **kwargs):
                 global next_thrift_port
                 kwargs.update(switch_args)
                 kwargs['thrift_port'] = ConfiguredP4Switch.next_thrift_port
                 ConfiguredP4Switch.next_thrift_port += 1
                 P4Switch.__init__(self, *opts, **kwargs)
-
             def describe(self):
                 print("%s -> Thrift port: %d" % (self.name, self.thrift_port))
 
@@ -198,7 +197,7 @@ class ExerciseRunner:
 
         # some programming that must happen after the net has started
         self.program_hosts()
-        self.program_switches()
+        #self.program_switches()
 
         # wait for that to finish. Not sure how to do this better
         sleep(1)
@@ -385,4 +384,3 @@ if __name__ == '__main__':
                               args.switch_json, args.behavioral_exe, args.quiet)
 
     exercise.run_exercise()
-
