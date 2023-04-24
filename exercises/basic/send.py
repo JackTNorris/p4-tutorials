@@ -87,7 +87,7 @@ if __name__ == "__main__":
         if len(sys.argv) > 2 and sys.argv[2]:
             settings_obj["destination_port"] = sys.argv[1]
 
-    for i in range(0, 3):
+    for i in range(0, len(pmu_data["times"])):
         print(i + 1)
         time.sleep(0.05)
         generate_packet(pmu_data["times"][i], pmu_data["magnitudes"]

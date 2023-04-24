@@ -40,6 +40,7 @@ header udp_t{
   bit<16> len;
   bit<16> checksum;
 }
+
 header pmu_t {
     bit<16>   sync;
     bit<16>   frame_size;
@@ -61,6 +62,7 @@ struct headers {
     udp_t          udp;
     pmu_t           pmu;
 }
+
 
 struct controller_pmu_packet {
     bit<32>   soc;
@@ -130,12 +132,20 @@ control MyVerifyChecksum(inout headers hdr, inout metadata meta) {
 /*************************************************************************
 **************  I N G R E S S   P R O C E S S I N G   *******************
 *************************************************************************/
-
+struct phasor_t {
+  bit<32> magnitude;
+  bit<32> angle;
+}
 control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
 
-    register<bit<32>>(3) R1;
+    register<bit<32>>(3) frac_sec_regs;
+    register<bit<32>>(3) soc_regs;
+    register<bit<32>>(3) magnitude_regs;
+    register<bit<32>>(3) phase_angle_regs;
+
+
     bit<32> new_reg3;
     bit<32> new_reg2;
 
@@ -144,18 +154,34 @@ control MyIngress(inout headers hdr,
     }
 
     action send_pmu_to_control_plane() {
-        meta.jpt_packet.phasors = hdr.pmu.phasors;
+        meta.jpt_packet.phasors = (bit<64>)hdr.pmu.phasors;
         meta.jpt_packet.soc = hdr.pmu.soc;
         meta.jpt_packet.fracsec = hdr.pmu.fracsec;
 
+        frac_sec_regs.read(new_reg3, (bit<32>)1);
+        frac_sec_regs.read(new_reg2, (bit<32>)0);
+        frac_sec_regs.write((bit<32>)2, new_reg3);
+        frac_sec_regs.write((bit<32>)1, new_reg2);
+        frac_sec_regs.write((bit<32>)0, hdr.pmu.fracsec);
+
+        soc_regs.read(new_reg3, (bit<32>)1);
+        soc_regs.read(new_reg2, (bit<32>)0);
+        soc_regs.write((bit<32>)2, new_reg3);
+        soc_regs.write((bit<32>)1, new_reg2);
+        soc_regs.write((bit<32>)0, hdr.pmu.soc);
 
 
-        R1.read(new_reg3, (bit<32>)1);
-        R1.read(new_reg2, (bit<32>)0);
-
-        R1.write((bit<32>)2, new_reg3);
-        R1.write((bit<32>)1, new_reg2);
-        R1.write((bit<32>)0, hdr.pmu.fracsec);
+        magnitude_regs.read(new_reg3, (bit<32>)1);
+        magnitude_regs.read(new_reg2, (bit<32>)0);
+        magnitude_regs.write((bit<32>)2, new_reg3);
+        magnitude_regs.write((bit<32>)1, new_reg2);
+        magnitude_regs.write((bit<32>)0, (bit<32>)(hdr.pmu.phasors >> 32));
+        
+        phase_angle_regs.read(new_reg3, (bit<32>)1);
+        phase_angle_regs.read(new_reg2, (bit<32>)0);
+        phase_angle_regs.write((bit<32>)2, new_reg3);
+        phase_angle_regs.write((bit<32>)1, new_reg2);
+        phase_angle_regs.write((bit<32>)0, (bit<32>)hdr.pmu.phasors);
 
         digest(1, meta.jpt_packet);
     }
