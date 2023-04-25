@@ -144,6 +144,7 @@ control MyIngress(inout headers hdr,
     register<bit<32>>(3) soc_regs;
     register<bit<32>>(3) magnitude_regs;
     register<bit<32>>(3) phase_angle_regs;
+    register<bit<32>>(3) R1;
 
 
     bit<32> new_reg3;
@@ -213,8 +214,19 @@ control MyIngress(inout headers hdr,
 
     apply {
         if (hdr.ipv4.isValid()) {
+            bit<32> temp_soc;
+            bit<32> temp_frac_sec;
+            soc_regs.read(temp_soc, (bit<32>)0);
+            if(hdr.pmu.soc ==  temp_soc)
+            {
+              frac_sec_regs.read(temp_frac_sec, (bit<32>)0);
+              R1.write(0, hdr.pmu.fracsec - temp_frac_sec);
+              if(hdr.pmu.fracsec - temp_frac_sec > 17000)
+              {
+                send_pmu_to_control_plane();
+              }
+            }
             update_registers();
-            send_pmu_to_control_plane();
             ipv4_lpm.apply();
         }
     }
