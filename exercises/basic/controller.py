@@ -123,36 +123,30 @@ def on_message_recv(msg, controller):
     msg = msg[32:]
     #pmu_packet = pmu_packet_parser(msg)
     #offset = 36
-    offset = 16
+    controller_phasor_info_packet_length = 16
+    controller_phasor_info_packet_count = 3
+    offset = controller_phasor_info_packet_length * controller_phasor_info_packet_count
     # For listening the next digest
     for m in range(num):
         global counter
         global buffer
         global mag_approx_errors
         global angle_approx_errors
-        counter += 1
 
-        print(counter)
-        pmu = parse_phasors(msg[8:offset])
-        buffer.append(calculate_complex_voltage(pmu[0]["magnitude"], pmu[0]["angle"]))
-        print("frac: " + str(int.from_bytes(msg[4:8], byteorder="big")))
-        print("mag: " + str(pmu[0]["magnitude"]))
-        print("phase: " + str(pmu[0]["angle"]))
-        if len(mag_approx_errors) > 0 and len(angle_approx_errors) > 0:
-            print("Mean mag error: " + str(mean(mag_approx_errors)))
-            print("Mean angle error: " + str(mean(angle_approx_errors)))
-        if counter % 3 == 0 and counter != 0:
-            complex_voltage_estimate = jpt_algo(buffer[2], buffer[1], buffer[0])
-            mag, pa = phase_angle_and_magnitude_from_complex_voltage(complex_voltage_estimate)
-            buffer = []
-            predicted_magnitude = mag
-            predicted_pa = pa
-            mag_approx_errors.append(calculate_approximation_error(pmu[0]["magnitude"], predicted_magnitude))
-            angle_approx_errors.append(calculate_angle_error(pmu[0]["angle"], predicted_pa))
-        if counter % 4 == 0 and counter != 0:
-            x = 5
-            #print("Approximation error for magnitude: ", calculate_approximation_error(pmu[0]["magnitude"] , predicted_magnitude))
-            #print("Approximation angle error for angle: ", calculate_angle_error(pmu[0]["angle"], predicted_pa))
-        #print(str(counter) + " : " + str(pmu[0]["magnitude"]))
+        jpt_pmus = []
+        msg_copy = msg[0:]
+        for j in range(controller_phasor_info_packet_count):
+            frac = int.from_bytes(msg_copy[4:8], byteorder="big")
+            soc = int.from_bytes(msg_copy[0:4], byteorder="big")
+            phasor = parse_phasors(msg_copy[8:controller_phasor_info_packet_length])
+
+            print("frac: " + str(frac))
+            print("soc: " + str(soc))
+            print("mag: " + str(phasor[0]["magnitude"]))
+            print("phase: " + str(phasor[0]["angle"]))
+            #move to next jpt_phasor in triplet of
+            msg_copy = msg_copy[controller_phasor_info_packet_length:]
+
+
         msg = msg[offset:]
 main()
