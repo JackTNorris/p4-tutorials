@@ -86,6 +86,65 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
     }
 
     return pmu_packet
+
+def generate_new_packet(interface, soc_in, frac_sec_in, voltage, angle, settings={"pmu_measurement_bytes": 8, "destination_ip": "192.168.0.100", "destination_port": 4712}):
+    # 2 byte
+    sync = b'\xAA\x01'
+
+    # 2 byte, 44 for 32 bit values of PMU, 40 for 16 bit values of PMU
+    # 36 - 8 + 8 * number of PMUs || 36 - 8 + 4 * number PMUs
+    frame_size = b'\x00\x24'
+
+    # 2 byte, 12 for this
+    id_code = b'\x00\x0C'
+
+    # 4 byte
+    soc = int(soc_in).to_bytes(4, 'big')
+
+    # 4 byte
+    frac_sec = int(frac_sec_in).to_bytes(4, 'big')
+
+    # 2 byte
+    #0000000000001001 = controller generated pmu
+    stat = b'\x00\x09'
+
+    # 4 or 8 byte x number of phasors (see doc, 8 is for float)
+    voltage_bytes = struct.pack('>f', voltage)
+    angle_bytes = struct.pack('>f', math.radians(angle))
+    phasors = voltage_bytes + angle_bytes
+
+    # 2 byte, assumed 60
+    freq = b'\x09\xC4'
+
+    # 2 byte
+    dfreq = b'\x00\x00'
+
+    # 4 byte
+    analog = b'\x42\xC8\x00\x00'
+
+    # 2 byte
+    digital = b'\x3C\x12'
+
+    # 2 byte
+    chk = b'\xD4\x3F'
+
+    pmu_packet = sync + frame_size + id_code + soc + frac_sec + \
+        stat + phasors + freq + dfreq + analog + digital + chk
+
+    # Set the destination IP address and port number
+    #TODO: make command line arguments
+    destination_ip = "10.0.2.2"
+    destination_port = 4712
+
+    # Create a UDP socket
+    udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udp_socket.setsockopt(socket.SOL_SOCKET, 25, str(interface + '\0').encode('utf-8'))
+    # Send the PMU packet to the destination IP address and port number
+    udp_socket.sendto(pmu_packet, (destination_ip, destination_port))
+
+    # Close the UDP socket
+    udp_socket.close()
+
 """
 def run_nnpy_thread(q, sock):
     # Create the thread
@@ -133,20 +192,38 @@ def on_message_recv(msg, controller):
         global mag_approx_errors
         global angle_approx_errors
 
-        jpt_pmus = []
+        jpt_inputs = []
         msg_copy = msg[0:]
+        new_soc = 0
+        new_frac_sec = 0
+
         for j in range(controller_phasor_info_packet_count):
             frac = int.from_bytes(msg_copy[4:8], byteorder="big")
             soc = int.from_bytes(msg_copy[0:4], byteorder="big")
             phasor = parse_phasors(msg_copy[8:controller_phasor_info_packet_length])
-
-            print("frac: " + str(frac))
-            print("soc: " + str(soc))
-            print("mag: " + str(phasor[0]["magnitude"]))
-            print("phase: " + str(phasor[0]["angle"]))
+            #top of receive stack, most recent measurement
+            if j == 0:
+                new_soc = soc
+                new_frac = frac + 17000
+            jpt_inputs.append(calculate_complex_voltage(phasor[0]["magnitude"], phasor[0]["angle"]))
             #move to next jpt_phasor in triplet of
             msg_copy = msg_copy[controller_phasor_info_packet_length:]
 
+        complex_voltage_estimate = jpt_algo(jpt_inputs[0], jpt_inputs[1], jpt_inputs[2])
+        generated_mag, generated_pa = phase_angle_and_magnitude_from_complex_voltage(complex_voltage_estimate)
 
+        if (new_frac) / 1000000 > 1:
+            new_frac = (new_frac + 17000) % 1000000
+            new_soc = new_soc + 1
+        #print("new soc " + str(new_soc))
+        #print("new frac " + str(new_frac))
+        generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
+        print("sending packet with: ")
+        print("soc: " + str(new_soc))
+        print("frac: " + str(new_frac))
+        print("magnitude: " + str(generated_mag))
+        print("phase_angle: " + str(generated_pa))
+
+        #move to next digest packet
         msg = msg[offset:]
 main()

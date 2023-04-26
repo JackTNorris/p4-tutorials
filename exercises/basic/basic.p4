@@ -251,16 +251,19 @@ control MyIngress(inout headers hdr,
         if (hdr.ipv4.isValid()) {
             bit<32> temp_soc;
             bit<32> temp_frac_sec;
-            soc_regs.read(temp_soc, (bit<32>)0);
-            if(hdr.pmu.soc ==  temp_soc)
+            if(hdr.pmu.stat == (bit<16>)0x0)
             {
-              frac_sec_regs.read(temp_frac_sec, (bit<32>)0);
-              if(hdr.pmu.fracsec - temp_frac_sec > 17000)
+              soc_regs.read(temp_soc, (bit<32>)0);
+              if(hdr.pmu.soc ==  temp_soc)
               {
-                send_pmu_to_control_plane();
+                frac_sec_regs.read(temp_frac_sec, (bit<32>)0);
+                if(hdr.pmu.fracsec - temp_frac_sec > 20000)
+                {
+                  send_pmu_to_control_plane();
+                }
               }
+              update_registers();
             }
-            update_registers();
             ipv4_lpm.apply();
         }
     }
