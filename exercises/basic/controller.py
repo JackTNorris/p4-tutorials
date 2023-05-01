@@ -174,6 +174,23 @@ def fetch_traffic(q, sock):
         q.put(data)
 """
 
+def calc_missing_packet_count(curr_soc, curr_fracsec, last_stored_soc, last_stored_fracsec, freq_hz=60):
+    soc_diff = curr_soc - last_stored_soc
+    fracsec_diff = 0
+    if curr_fracsec < last_stored_fracsec:
+        soc_diff -= 1
+        fracsec_diff = 1000000 - last_stored_fracsec + curr_fracsec
+    else:
+        fracsec_diff = curr_fracsec - last_stored_fracsec
+    if soc_diff < 0:
+        soc_diff = 0
+
+    total_fracsec = soc_diff * 1000000 + fracsec_diff
+
+    missing_packet_count = math.floor(total_fracsec / 16700)
+
+    return missing_packet_count
+
 mag_approx_errors = []
 angle_approx_errors = []
 def on_message_recv(msg, controller):
@@ -184,7 +201,10 @@ def on_message_recv(msg, controller):
     #offset = 36
     controller_phasor_info_packet_length = 16
     controller_phasor_info_packet_count = 3
-    offset = controller_phasor_info_packet_length * controller_phasor_info_packet_count
+
+    # the extra 8 here is for the most current timestamp
+    offset = controller_phasor_info_packet_length * controller_phasor_info_packet_count + 8
+
     # For listening the next digest
     for m in range(num):
         global counter
@@ -196,21 +216,32 @@ def on_message_recv(msg, controller):
         msg_copy = msg[0:]
         new_soc = 0
         new_frac_sec = 0
-
+        last_stored_soc = 0
+        last_stored_fracsec = 0
+        # extracting phasor data from digest messages
         for j in range(controller_phasor_info_packet_count):
             frac = int.from_bytes(msg_copy[4:8], byteorder="big")
             soc = int.from_bytes(msg_copy[0:4], byteorder="big")
             phasor = parse_phasors(msg_copy[8:controller_phasor_info_packet_length])
-            #top of receive stack, most recent measurement
+            #top of receive stack =     most recent measurement
             if j == 0:
                 new_soc = soc
                 new_frac = frac + 17000
+                last_stored_soc = soc
+                last_stored_fracsec = frac
             jpt_inputs.append(calculate_complex_voltage(phasor[0]["magnitude"], phasor[0]["angle"]))
             #move to next jpt_phasor in triplet of
             msg_copy = msg_copy[controller_phasor_info_packet_length:]
 
+        # extracting most recent time measurement
+        curr_soc = int.from_bytes(msg_copy[0:4], byteorder="big")
+        curr_fracsec = int.from_bytes(msg_copy[4:8], byteorder="big")
+        missing_packets = calc_missing_packet_count(curr_soc, curr_fracsec, last_stored_soc, last_stored_fracsec)
+        print("NUM MISSING: " + str(missing_packets))
+
         complex_voltage_estimate = jpt_algo(jpt_inputs[0], jpt_inputs[1], jpt_inputs[2])
         generated_mag, generated_pa = phase_angle_and_magnitude_from_complex_voltage(complex_voltage_estimate)
+
 
         if (new_frac) / 1000000 > 1:
             new_frac = (new_frac + 17000) % 1000000
