@@ -87,7 +87,29 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
 
     return pmu_packet
 
-def generate_new_packet(interface, soc_in, frac_sec_in, voltage, angle, settings={"pmu_measurement_bytes": 8, "destination_ip": "192.168.0.100", "destination_port": 4712}):
+def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored_soc, last_stored_fracsec):
+    jpt_inputs = initial_jpt_inputs[0:]
+    for i in range(num_packets):
+        new_soc = last_stored_soc
+        new_frac = last_stored_fracsec + 17000
+        complex_voltage_estimate = jpt_algo(jpt_inputs[0], jpt_inputs[1], jpt_inputs[2])
+        generated_mag, generated_pa = phase_angle_and_magnitude_from_complex_voltage(complex_voltage_estimate)
+        if (new_frac) / 1000000 > 1:
+            new_frac = (new_frac + 17000) % 1000000
+            new_soc = new_soc + 1
+        generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
+        print("sending packet with: ")
+        print("soc: " + str(new_soc))
+        print("frac: " + str(new_frac))
+        print("magnitude: " + str(generated_mag))
+        print("phase_angle: " + str(generated_pa))
+        last_stored_soc = new_soc
+        last_stored_fracsec = new_frac
+        jpt_inputs = [complex_voltage_estimate] + jpt_inputs[0:2]
+
+
+
+def generate_new_packet(interface, soc_in, frac_sec_in, voltage, angle, settings={"pmu_measurement_bytes": 8, "destination_ip": "10.0.2.2", "destination_port": 4712}):
     # 2 byte
     sync = b'\xAA\x01'
 
@@ -211,7 +233,6 @@ def on_message_recv(msg, controller):
         global buffer
         global mag_approx_errors
         global angle_approx_errors
-
         jpt_inputs = []
         msg_copy = msg[0:]
         new_soc = 0
@@ -236,25 +257,11 @@ def on_message_recv(msg, controller):
         # extracting most recent time measurement
         curr_soc = int.from_bytes(msg_copy[0:4], byteorder="big")
         curr_fracsec = int.from_bytes(msg_copy[4:8], byteorder="big")
+
+
         missing_packets = calc_missing_packet_count(curr_soc, curr_fracsec, last_stored_soc, last_stored_fracsec)
         print("NUM MISSING: " + str(missing_packets))
-
-        complex_voltage_estimate = jpt_algo(jpt_inputs[0], jpt_inputs[1], jpt_inputs[2])
-        generated_mag, generated_pa = phase_angle_and_magnitude_from_complex_voltage(complex_voltage_estimate)
-
-
-        if (new_frac) / 1000000 > 1:
-            new_frac = (new_frac + 17000) % 1000000
-            new_soc = new_soc + 1
-        #print("new soc " + str(new_soc))
-        #print("new frac " + str(new_frac))
-        generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
-        print("sending packet with: ")
-        print("soc: " + str(new_soc))
-        print("frac: " + str(new_frac))
-        print("magnitude: " + str(generated_mag))
-        print("phase_angle: " + str(generated_pa))
-
+        generate_new_packets("s1-eth2", missing_packets, jpt_inputs, last_stored_soc, last_stored_fracsec)
         #move to next digest packet
         msg = msg[offset:]
 main()

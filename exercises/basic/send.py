@@ -89,7 +89,7 @@ if __name__ == "__main__":
 
     for i in range(0, 100):
         print(i + 1)
-        time.sleep(0.05)
+        time.sleep(0.017)
         generate_packet(pmu_data["times"][i], pmu_data["magnitudes"]
                         [0][i], pmu_data["phase_angles"][0][i], settings_obj)
 

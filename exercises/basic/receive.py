@@ -41,7 +41,6 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
         "analog": data[analog_start_byte:digital_start_byte],
         "digital": data[digital_start_byte:],
     }
-    print("frac_sec = ", pmu_packet["frac_sec"])
 
     return pmu_packet
 # wait for incoming PMU packets
