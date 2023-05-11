@@ -54,9 +54,13 @@ if __name__ == "__main__":
         counter += 1
         # print float value of pmu_packet_parser(data)["frame_size"]
         pmu_data = pmu_packet_parser(data)
+        print(str(counter) + " : " + str(pmu_data["phasors"][0]["magnitude"]))
+
+        """
         print(counter)
         print("Magnitude: ", pmu_data["phasors"][0]["magnitude"])
         print("Angle: ", pmu_data["phasors"][0]["angle"])
+        """
         """
         buffer.append(calculate_complex_voltage(pmu_data["phasors"][0]["magnitude"], pmu_data["phasors"][0]["angle"]))
         if counter % 3 == 0 and counter != 0:
@@ -71,4 +75,3 @@ if __name__ == "__main__":
             print("Approximation error for magnitude: ", calculate_approximation_error(pmu_data["phasors"][0]["magnitude"] , predicted_magnitude))
             print("Approximation error for angle: ", calculate_approximation_error(pmu_data["phasors"][0]["angle"], predicted_pa))
         """
-        print("\n")
