@@ -964,6 +964,8 @@ struct jpt_pmu_triplet_t {
   bit<32> soc2;
   bit<32> fracsec2;
   bit<64> phasors2;
+  bit<32> curr_soc;
+  bit<32> curr_fracsec;
 }
 struct metadata {
     jpt_pmu_triplet_t jpt_packet;
@@ -1103,9 +1105,13 @@ control MyIngress(inout headers hdr,
         soc_regs.read(meta.jpt_packet.soc2, (bit<32>)2);
         frac_sec_regs.read(meta.jpt_packet.fracsec2, (bit<32>)2);
 
+
         R1.write(0, meta.jpt_packet.fracsec0);
         R1.write(1, meta.jpt_packet.fracsec1);
         R1.write(2, meta.jpt_packet.fracsec2);
+
+        meta.jpt_packet.curr_soc = hdr.pmu.soc;
+        meta.jpt_packet.curr_fracsec = hdr.pmu.fracsec;
 
         digest(1, meta.jpt_packet);
     }

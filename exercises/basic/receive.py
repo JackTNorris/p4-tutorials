@@ -2,7 +2,7 @@ import socket
 import struct
 import math
 import sys
-
+from sorted_list import KeySortedList
 
 
 UDP_IP_ADDRESS = "0.0.0.0"  # listen on all available interfaces
@@ -26,6 +26,7 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
     dfreq_start_byte = freq_start_byte + settings["freq_bytes"]
     analog_start_byte = dfreq_start_byte + settings["dfreq_bytes"]
     digital_start_byte = analog_start_byte + 4
+    chk_start_byte = digital_start_byte + 2
 
     # convert each field to correct data type
     pmu_packet = {
@@ -39,7 +40,8 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
         "freq": struct.unpack('>f', data[freq_start_byte:dfreq_start_byte]),
         "dfreq": struct.unpack('>f', data[dfreq_start_byte:analog_start_byte]),
         "analog": data[analog_start_byte:digital_start_byte],
-        "digital": data[digital_start_byte:],
+        "digital": data[digital_start_byte:chk_start_byte],
+        "chk": data[chk_start_byte:]
     }
 
     return pmu_packet
@@ -49,11 +51,13 @@ if __name__ == "__main__":
     buffer = []
     predicted_magnitude = 0
     predicted_pa = 0
+    sorted_pmus = KeySortedList(keyfunc = lambda pmu: pmu["soc"] + pmu["frac_sec"] / 1000000)
     while True:
         data, addr = serverSock.recvfrom(1500)  # receive up to 1500 bytes of data
         counter += 1
         # print float value of pmu_packet_parser(data)["frame_size"]
         pmu_data = pmu_packet_parser(data)
+        sorted_pmus.insert(pmu_data)
         print(str(counter) + " : " + str(pmu_data["phasors"][0]["magnitude"]))
 
         """

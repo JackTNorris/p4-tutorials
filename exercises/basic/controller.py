@@ -92,16 +92,19 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
 
     return pmu_packet
 
-def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored_soc, last_stored_fracsec):
+def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored_soc, last_stored_fracsec, curr_soc, curr_fracsec):
     jpt_inputs = initial_jpt_inputs[0:]
     for i in range(num_packets):
         new_soc = last_stored_soc
-        new_frac = last_stored_fracsec + 17000
+        new_frac = last_stored_fracsec + 16666
         complex_voltage_estimate = jpt_algo(jpt_inputs[0], jpt_inputs[1], jpt_inputs[2])
         generated_mag, generated_pa = phase_angle_and_magnitude_from_complex_voltage(complex_voltage_estimate)
         if (new_frac) / 1000000 > 1:
-            new_frac = (new_frac + 17000) % 1000000
+            new_frac = (new_frac + 16666) % 1000000
             new_soc = new_soc + 1
+
+        #make sure not generating too many
+        print(str((curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac)))
         generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
         """
         print("sending packet with: ")
@@ -214,16 +217,17 @@ def calc_missing_packet_count(curr_soc, curr_fracsec, last_stored_soc, last_stor
     if soc_diff < 0:
         soc_diff = 0
 
-    total_fracsec = soc_diff * 1000000 + fracsec_diff
+    total_fracsec_passed = soc_diff * 1000000 + fracsec_diff
     #17000
-    missing_packet_count = math.floor(total_fracsec / 17001)
+    print(total_fracsec_passed / 1000000 * 60)
+    missing_packet_count = math.ceil(total_fracsec_passed / 1000000 * 60) - 1
 
-    return max(missing_packet_count, 1)
+    return missing_packet_count
 
 
 mag_approx_errors = []
 angle_approx_errors = []
-
+missing_packet_counter = 0
 def on_message_recv(msg, controller):
     _, _, ctx_id, list_id, buffer_id, num = struct.unpack("<iQiiQi", msg[:32])
     ### Insert the receiving logic below ###
@@ -242,6 +246,8 @@ def on_message_recv(msg, controller):
         global buffer
         global mag_approx_errors
         global angle_approx_errors
+        global pmu_recovery_data_buffer
+        global missing_packet_counter
         jpt_inputs = []
         msg_copy = msg[0:]
         new_soc = 0
@@ -259,7 +265,7 @@ def on_message_recv(msg, controller):
             #top of receive stack =     most recent measurement
             if j == 0:
                 new_soc = soc
-                new_frac = frac + 17000
+                new_frac = frac + 16666
                 last_stored_soc = soc
                 last_stored_fracsec = frac
 
@@ -278,10 +284,12 @@ def on_message_recv(msg, controller):
         jpt_inputs.reverse()
 
         missing_packets = calc_missing_packet_count(curr_soc, curr_fracsec, last_stored_soc, last_stored_fracsec)
-        print("NUM MISSING: " + str(missing_packets))
+
+        missing_packet_counter += missing_packets
+        print("NUM MISSING TOTAL: " + str(missing_packet_counter))
 
         if len(jpt_inputs) > 2:
-            generate_new_packets("s1-eth2", missing_packets, jpt_inputs, last_stored_soc, last_stored_fracsec)
+            generate_new_packets("s1-eth2", missing_packets, jpt_inputs, last_stored_soc, last_stored_fracsec, curr_soc, curr_fracsec)
 
         #move to next digest packet
         msg = msg[offset:]
