@@ -58,13 +58,9 @@ if __name__ == "__main__":
         # print float value of pmu_packet_parser(data)["frame_size"]
         pmu_data = pmu_packet_parser(data)
         sorted_pmus.insert(pmu_data)
-        print(str(counter) + " : " + str(pmu_data["phasors"][0]["magnitude"]))
 
-        """
-        print(counter)
-        print("Magnitude: ", pmu_data["phasors"][0]["magnitude"])
-        print("Angle: ", pmu_data["phasors"][0]["angle"])
-        """
+        print(str(counter) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
+
         """
         buffer.append(calculate_complex_voltage(pmu_data["phasors"][0]["magnitude"], pmu_data["phasors"][0]["angle"]))
         if counter % 3 == 0 and counter != 0:

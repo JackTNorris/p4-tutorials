@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import socket
 import datetime
 import math
@@ -88,10 +90,8 @@ if __name__ == "__main__":
             settings_obj["destination_port"] = sys.argv[1]
 
     for i in range(0, 100):
-        #print(i + 1)
-        print(str(i+1) + " : " + str(pmu_data["magnitudes"][0][i]))
+        print(str(i + 1) + " | " + "Magnitude: " + str(pmu_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_data["phase_angles"][0][i]))
         time.sleep(0.017)
-        generate_packet(pmu_data["times"][i], pmu_data["magnitudes"]
-                        [0][i], pmu_data["phase_angles"][0][i], settings_obj)
+        generate_packet(pmu_data["times"][i], pmu_data["magnitudes"][0][i], pmu_data["phase_angles"][0][i], settings_obj)
 
     # generate_packets()

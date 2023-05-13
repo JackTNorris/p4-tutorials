@@ -260,14 +260,15 @@ control MyIngress(inout headers hdr,
             if(hdr.pmu.stat == (bit<16>)0x0)
             {
               soc_regs.read(temp_soc, (bit<32>)0);
-              if(hdr.pmu.soc ==  temp_soc)
+              frac_sec_regs.read(temp_frac_sec, (bit<32>)0);
+              bit<32> soc_diff_in_frac_sec = (hdr.pmu.soc - temp_soc) * 1000000;
+              bit<32> frac_sec_diff = soc_diff_in_frac_sec - temp_frac_sec + hdr.pmu.fracsec;
+
+              if(frac_sec_diff > 20000 && temp_soc != 0) //gives a bit of "breathing room" for measurements
               {
-                frac_sec_regs.read(temp_frac_sec, (bit<32>)0);
-                if(hdr.pmu.fracsec - temp_frac_sec > 20000)
-                {
-                  send_pmu_to_control_plane();
-                }
+                send_pmu_to_control_plane();
               }
+
               update_registers();
             }
             ipv4_lpm.apply();

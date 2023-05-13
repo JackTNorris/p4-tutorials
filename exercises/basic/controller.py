@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import runtime_CLI
 from sswitch_runtime import SimpleSwitch
 from sswitch_runtime.ttypes import *
@@ -13,6 +14,7 @@ import threading
 from collections import namedtuple
 from sorted_list import KeySortedList
 
+#TODO: replace hardcoded values like 16000 and 17000 with values derived from Frequency
 
 counter = 0
 buffer = []
@@ -91,6 +93,14 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
     }
 
     return pmu_packet
+        #make sure not generating too many
+        #print(str((curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac)))
+        if (curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac) > 16000:
+            generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
+
+        print("sending packet with: ")
+        print("soc: " + str(new_soc))
+        print("frac: " + str(new_frac))
 
 def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored_soc, last_stored_fracsec, curr_soc, curr_fracsec):
     jpt_inputs = initial_jpt_inputs[0:]
@@ -104,15 +114,16 @@ def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored
             new_soc = new_soc + 1
 
         #make sure not generating too many
-        print(str((curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac)))
-        generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
-        """
+        #print(str((curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac)))
+        if (curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac) > 16000:
+            generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
+
         print("sending packet with: ")
         print("soc: " + str(new_soc))
         print("frac: " + str(new_frac))
         print("magnitude: " + str(generated_mag))
         print("phase_angle: " + str(generated_pa))
-        """
+
         last_stored_soc = new_soc
         last_stored_fracsec = new_frac
         jpt_inputs = [complex_voltage_estimate] + jpt_inputs[0:2]
@@ -220,7 +231,7 @@ def calc_missing_packet_count(curr_soc, curr_fracsec, last_stored_soc, last_stor
     total_fracsec_passed = soc_diff * 1000000 + fracsec_diff
     #17000
     print(total_fracsec_passed / 1000000 * 60)
-    missing_packet_count = math.ceil(total_fracsec_passed / 1000000 * 60) - 1
+    missing_packet_count = round(total_fracsec_passed / 1000000 * 60) - 1
 
     return missing_packet_count
 
@@ -288,9 +299,10 @@ def on_message_recv(msg, controller):
         missing_packet_counter += missing_packets
         print("NUM MISSING TOTAL: " + str(missing_packet_counter))
 
+        """
         if len(jpt_inputs) > 2:
             generate_new_packets("s1-eth2", missing_packets, jpt_inputs, last_stored_soc, last_stored_fracsec, curr_soc, curr_fracsec)
-
+        """
         #move to next digest packet
         msg = msg[offset:]
 
