@@ -93,14 +93,6 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
     }
 
     return pmu_packet
-        #make sure not generating too many
-        #print(str((curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac)))
-        if (curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac) > 16000:
-            generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
-
-        print("sending packet with: ")
-        print("soc: " + str(new_soc))
-        print("frac: " + str(new_frac))
 
 def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored_soc, last_stored_fracsec, curr_soc, curr_fracsec):
     jpt_inputs = initial_jpt_inputs[0:]
@@ -299,10 +291,9 @@ def on_message_recv(msg, controller):
         missing_packet_counter += missing_packets
         print("NUM MISSING TOTAL: " + str(missing_packet_counter))
 
-        """
+
         if len(jpt_inputs) > 2:
             generate_new_packets("s1-eth2", missing_packets, jpt_inputs, last_stored_soc, last_stored_fracsec, curr_soc, curr_fracsec)
-        """
         #move to next digest packet
         msg = msg[offset:]
 
