@@ -28,8 +28,12 @@ class SimpleSwitchAPI(runtime_CLI.RuntimeAPI):
                                         standard_client, mc_client)
         self.sswitch_client = sswitch_client
 
-pmu_recovery_data_buffer = KeySortedList(keyfunc = lambda obj: obj["timestamp"])
 
+pmu_recovery_data_buffer = KeySortedList(keyfunc = lambda obj: obj["timestamp"])
+#adding in the first coupe measurements for JPT
+pmu_recovery_data_buffer.insert({"timestamp": 1390971613.583, "magnitude": 253793.23967, "phase_angle": -14.352592768027100})
+pmu_recovery_data_buffer.insert({"timestamp": 1390971613.6, "magnitude": 253811.55021, "phase_angle": -14.13486880587740})
+pmu_recovery_data_buffer.insert({"timestamp": 1390971613.617, "magnitude": 253829.860750, "phase_angle": -13.934333577581600})
 
 def main():
     args = runtime_CLI.get_parser().parse_args()
@@ -110,11 +114,13 @@ def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored
         if (curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac) > 16000:
             generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
 
+        """
         print("sending packet with: ")
         print("soc: " + str(new_soc))
         print("frac: " + str(new_frac))
         print("magnitude: " + str(generated_mag))
         print("phase_angle: " + str(generated_pa))
+        """
 
         last_stored_soc = new_soc
         last_stored_fracsec = new_frac
@@ -222,7 +228,7 @@ def calc_missing_packet_count(curr_soc, curr_fracsec, last_stored_soc, last_stor
 
     total_fracsec_passed = soc_diff * 1000000 + fracsec_diff
     #17000
-    print(total_fracsec_passed / 1000000 * 60)
+    #print(total_fracsec_passed / 1000000 * 60)
     missing_packet_count = round(total_fracsec_passed / 1000000 * 60) - 1
 
     return missing_packet_count
@@ -292,8 +298,8 @@ def on_message_recv(msg, controller):
         print("NUM MISSING TOTAL: " + str(missing_packet_counter))
 
 
-        if len(jpt_inputs) > 2:
-            generate_new_packets("s1-eth2", missing_packets, jpt_inputs, last_stored_soc, last_stored_fracsec, curr_soc, curr_fracsec)
+        #if len(jpt_inputs) > 2:
+        #generate_new_packets("s1-eth2", missing_packets, jpt_inputs, last_stored_soc, last_stored_fracsec, curr_soc, curr_fracsec)
         #move to next digest packet
         msg = msg[offset:]
 

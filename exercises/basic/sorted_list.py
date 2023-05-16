@@ -18,7 +18,7 @@ class KeySortedList:
             self._list.insert(i, item)  # Insert the item itself in the corresponding place.
 
     def retrieve_last_n(self, n):
-        return list[-n:]
+        return self._list[-n:]
 
     def print(self):
         print(self._list)

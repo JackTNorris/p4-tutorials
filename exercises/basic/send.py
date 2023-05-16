@@ -89,8 +89,9 @@ if __name__ == "__main__":
         if len(sys.argv) > 2 and sys.argv[2]:
             settings_obj["destination_port"] = sys.argv[1]
 
-    for i in range(0, 100):
-        print(str(i + 1) + " | " + "Magnitude: " + str(pmu_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_data["phase_angles"][0][i]))
+    #first 3 packets exists in switch
+    for i in range(3, 103):
+        print(str(i - 2) + " | " + "Magnitude: " + str(pmu_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_data["phase_angles"][0][i]))
         time.sleep(0.017)
         generate_packet(pmu_data["times"][i], pmu_data["magnitudes"][0][i], pmu_data["phase_angles"][0][i], settings_obj)
 
