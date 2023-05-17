@@ -298,8 +298,8 @@ def on_message_recv(msg, controller):
         print("NUM MISSING TOTAL: " + str(missing_packet_counter))
 
 
-        #if len(jpt_inputs) > 2:
-        #generate_new_packets("s1-eth2", missing_packets, jpt_inputs, last_stored_soc, last_stored_fracsec, curr_soc, curr_fracsec)
+        if len(jpt_inputs) > 2:
+            generate_new_packets("s1-eth2", missing_packets, jpt_inputs, last_stored_soc, last_stored_fracsec, curr_soc, curr_fracsec)
         #move to next digest packet
         msg = msg[offset:]
 

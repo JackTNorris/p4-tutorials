@@ -1144,6 +1144,14 @@ control MyIngress(inout headers hdr,
             {
               soc_regs.read(temp_soc, (bit<32>)0);
               frac_sec_regs.read(temp_frac_sec, (bit<32>)0);
+              // initializing first element
+              if(temp_soc == 0)
+              {
+                temp_soc = (bit<32>)1390950013;
+                temp_frac_sec = (bit<32>)617000;
+                soc_regs.write(0, temp_soc);
+                frac_sec_regs.write(0, temp_frac_sec);
+              }
               bit<32> soc_diff_in_frac_sec = (hdr.pmu.soc - temp_soc) * 1000000;
               bit<32> frac_sec_diff = soc_diff_in_frac_sec - temp_frac_sec + hdr.pmu.fracsec;
 

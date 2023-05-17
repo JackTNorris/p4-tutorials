@@ -32,10 +32,9 @@ def generate_packet(time, voltage, angle, settings={"pmu_measurement_bytes": 8, 
 
     # 4 byte
     soc = int(dt.strftime("%s")).to_bytes(4, 'big')
-
+    print(dt.strftime("%s"))
     # 4 byte
     frac_sec = dt.microsecond.to_bytes(4, 'big')
-
     # 2 byte (no errors)
     stat = b'\x00\x00'
 
@@ -91,6 +90,8 @@ if __name__ == "__main__":
 
     #first 3 packets exists in switch
     for i in range(3, 103):
+        if i == 3:
+            print(pmu_data["times"][i])
         print(str(i - 2) + " | " + "Magnitude: " + str(pmu_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_data["phase_angles"][0][i]))
         time.sleep(0.017)
         generate_packet(pmu_data["times"][i], pmu_data["magnitudes"][0][i], pmu_data["phase_angles"][0][i], settings_obj)
