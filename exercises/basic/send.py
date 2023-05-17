@@ -7,6 +7,7 @@ import struct
 import pandas as pd
 import sys
 import time
+import argparse
 sys.path.append('../')
 from utilities.pmu_csv_parser import parse_csv_data
 
@@ -76,20 +77,29 @@ def generate_packet(time, voltage, angle, settings={"pmu_measurement_bytes": 8, 
 
 
 if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(
+                        prog='pmu-packet-sender',
+                        description='Sends pmu packets',
+                        epilog='Text at the bottom of help')
+    parser.add_argument('filename')
+    parser.add_argument('--ip', default="10.0.2.2")
+    parser.add_argument('--port', default=4712)
+    parser.add_argument('--num_packets', default=103)
+    args = parser.parse_args()
+
     pmu_data = parse_csv_data(
-        "./pmu12.csv",
+        args.filename,
         "TimeTag",
         ["Magnitude01", "Magnitude02", "Magnitude03"],
         ["Angle01", "Angle02", "Angle03"]
     )
-    settings_obj = {}
-    if len(sys.argv) > 1 and sys.argv[1]:
-        settings_obj["destination_ip"] = sys.argv[1]
-        if len(sys.argv) > 2 and sys.argv[2]:
-            settings_obj["destination_port"] = sys.argv[1]
+
+    settings_obj = {"destination_ip": args.ip, "destination_port": args.port}
+
 
     #first 3 packets exists in switch
-    for i in range(3, 103):
+    for i in range(3, min(args.num_packets, len(pmu_data["times"]))):
         if i == 3:
             print(pmu_data["times"][i])
         print(str(i - 2) + " | " + "Magnitude: " + str(pmu_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_data["phase_angles"][0][i]))
