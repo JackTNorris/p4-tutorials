@@ -8,6 +8,7 @@ import pandas as pd
 import sys
 import time
 import argparse
+import json
 sys.path.append('../')
 from utilities.pmu_csv_parser import parse_csv_data
 
@@ -86,7 +87,13 @@ if __name__ == "__main__":
     parser.add_argument('--ip', default="10.0.2.2")
     parser.add_argument('--port', default=4712)
     parser.add_argument('--num_packets', default=103)
+    parser.add_argument('--drop_indexes', default='./evaluation/missing-data.json')
+    
     args = parser.parse_args()
+
+    f = open(args.drop_indexes)
+
+    drop_indexes = json.load(f)
 
     pmu_data = parse_csv_data(
         args.filename,
@@ -95,14 +102,16 @@ if __name__ == "__main__":
         ["Angle01", "Angle02", "Angle03"]
     )
 
-    settings_obj = {"destination_ip": args.ip, "destination_port": args.port}
-
 
     #first 3 packets exists in switch
     for i in range(3, min(args.num_packets, len(pmu_data["times"]))):
         if i == 3:
             print(pmu_data["times"][i])
-        print(str(i - 2) + " | " + "Magnitude: " + str(pmu_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_data["phase_angles"][0][i]))
+        
+        #sending to loopback as opposed to switch
+        settings_obj = {"destination_ip": "127.0.0.1" if i in drop_indexes else  args.ip, "destination_port": args.port}
+    
+        print(str(i-2) + " | " + "Magnitude: " + str(pmu_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_data["phase_angles"][0][i]))
         time.sleep(0.017)
         generate_packet(pmu_data["times"][i], pmu_data["magnitudes"][0][i], pmu_data["phase_angles"][0][i], settings_obj)
 

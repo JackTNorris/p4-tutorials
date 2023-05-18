@@ -9,7 +9,7 @@
 *~
 
 # Compiled JSON
-*.json
+settings.json
 !*p4app.json
 !topology.json
 !*-runtime.json
