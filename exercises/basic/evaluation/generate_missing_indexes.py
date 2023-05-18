@@ -18,13 +18,13 @@ if __name__ == "__main__":
                         prog='missing-pmu-packet-index-generator',
                         description='Sends pmu packets',
                         epilog='Text at the bottom of help')
-        
+
     parser.add_argument("-m", "--missing", default = 10)
     parser.add_argument("--data_size", default = 100)
     parser.add_argument("-o", "--output", default = "missing-data.json")
     args = parser.parse_args()
     data_size = args.data_size
-    missing_indexes = generate_n_percent_missing(args.missing, args.data_size)
+    missing_indexes = generate_n_percent_missing(int(args.missing), int(args.data_size))
 
     with open(args.output, "w") as outfile:
         json.dump(missing_indexes, outfile, skipkeys=True, indent=4)

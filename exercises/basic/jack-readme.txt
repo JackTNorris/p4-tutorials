@@ -10,7 +10,7 @@ To get started:
 
 - if you want missing data:
 
-a) run "python3 evaluation/generate_missing_indexes.py <number missing packets> -o <missing index json file you want>"
+a) run "python3 evaluation/generate_missing_indexes.py -m <number missing packets> -o <missing index json file you want>"
 b) xterm into h1 and run "python3 send.py pmu12.csv --drop_indexes <name of generated json> --ip 10.0.2.2"
 
 - otherwise:
