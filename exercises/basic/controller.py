@@ -31,9 +31,6 @@ class SimpleSwitchAPI(runtime_CLI.RuntimeAPI):
 
 pmu_recovery_data_buffer = KeySortedList(keyfunc = lambda obj: obj["timestamp"])
 #adding in the first coupe measurements for JPT
-pmu_recovery_data_buffer.insert({"timestamp": 1390971613.583, "magnitude": 253793.23967, "phase_angle": -14.352592768027100})
-pmu_recovery_data_buffer.insert({"timestamp": 1390971613.6, "magnitude": 253811.55021, "phase_angle": -14.13486880587740})
-pmu_recovery_data_buffer.insert({"timestamp": 1390971613.617, "magnitude": 253829.860750, "phase_angle": -13.934333577581600})
 
 def main():
     args = runtime_CLI.get_parser().parse_args()
@@ -161,13 +158,13 @@ def generate_new_packet(interface, soc_in, frac_sec_in, voltage, angle, settings
     dfreq = b'\x00\x00'
 
     # 4 byte
-    analog = b'\x42\xC8\x00\x00'
+    analog = b'\x00\x00\x00\x00'
 
     # 2 byte
-    digital = b'\x3C\x12'
+    digital = b'\x00\x00'
 
     # 2 byte
-    chk = b'\xD4\x3F'
+    chk = b'\x00\x00'
 
     pmu_packet = sync + frame_size + id_code + soc + frac_sec + \
         stat + phasors + freq + dfreq + analog + digital + chk
