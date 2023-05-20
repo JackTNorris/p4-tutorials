@@ -52,13 +52,13 @@ def generate_packet(time, voltage, angle, settings={"pmu_measurement_bytes": 8, 
     dfreq = b'\x00\x00'
 
     # 4 byte
-    analog = b'\x42\xC8\x00\x00'
+    analog = b'\x00\x00\x00\x00'
 
     # 2 byte
-    digital = b'\x3C\x12'
+    digital = b'\x00\x00'
 
     # 2 byte
-    chk = b'\xD4\x3F'
+    chk = b'\x00\x00'
 
     pmu_packet = sync + frame_size + id_code + soc + frac_sec + \
         stat + phasors + freq + dfreq + analog + digital + chk
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     parser.add_argument('filename')
     parser.add_argument('--ip', default="10.0.2.2")
     parser.add_argument('--port', default=4712)
-    parser.add_argument('--num_packets', default=103)
+    parser.add_argument('--num_packets', default=-1)
     parser.add_argument('--drop_indexes', default='./evaluation/missing-data.json')
 
     args = parser.parse_args()
@@ -102,16 +102,19 @@ if __name__ == "__main__":
         ["Angle01", "Angle02", "Angle03"]
     )
 
+    num_to_send = len(pmu_data["times"])
+    if int(args.num_packets) > 0:
+        num_to_send = int(args.num_packets)
 
-    #first 3 packets exists in switch
-    for i in range(3, min(int(args.num_packets), len(pmu_data["times"]))):
-        if i == 3:
+
+    for i in range(num_to_send):
+        if i == 0:
             print(pmu_data["times"][i])
 
         #sending to loopback as opposed to switch
         settings_obj = {"destination_ip": "127.0.0.1" if i in drop_indexes else  args.ip, "destination_port": int(args.port)}
 
-        print(str(i-2) + " | " + "Magnitude: " + str(pmu_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_data["phase_angles"][0][i]))
+        print(str(i+1) + " | " + "Magnitude: " + str(pmu_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_data["phase_angles"][0][i]))
         time.sleep(0.017)
         generate_packet(pmu_data["times"][i], pmu_data["magnitudes"][0][i], pmu_data["phase_angles"][0][i], settings_obj)
 
