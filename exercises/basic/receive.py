@@ -21,7 +21,7 @@ def parse_phasors(phasor_data, settings={"num_phasors": 1, "pmu_measurement_byte
     }
     return [phasor]
 
-def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors": 1, "freq_bytes": 4, "dfreq_bytes": 4}):
+def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors": 1, "freq_bytes": 2, "dfreq_bytes": 2}):
     freq_start_byte = 16 + settings["num_phasors"] * settings["pmu_measurement_bytes"]
     dfreq_start_byte = freq_start_byte + settings["freq_bytes"]
     analog_start_byte = dfreq_start_byte + settings["dfreq_bytes"]
@@ -37,8 +37,8 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
         "frac_sec": int.from_bytes(data[10:14], byteorder="big"),
         "stat": int.from_bytes(data[14:16], byteorder="big"),
         "phasors": parse_phasors(data[16:16 + settings["pmu_measurement_bytes"]], {"num_phasors": settings["num_phasors"], "pmu_measurement_bytes": settings["pmu_measurement_bytes"]}),
-        "freq": struct.unpack('>f', data[freq_start_byte:dfreq_start_byte]),
-        "dfreq": struct.unpack('>f', data[dfreq_start_byte:analog_start_byte]),
+        "freq": data[freq_start_byte:dfreq_start_byte],
+        "dfreq": data[dfreq_start_byte:analog_start_byte],
         "analog": data[analog_start_byte:digital_start_byte],
         "digital": data[digital_start_byte:chk_start_byte],
         "chk": data[chk_start_byte:]
@@ -58,8 +58,18 @@ if __name__ == "__main__":
         # print float value of pmu_packet_parser(data)["frame_size"]
         pmu_data = pmu_packet_parser(data)
         sorted_pmus.insert(pmu_data)
+        if int.from_bytes(pmu_data["analog"], byteorder="big") != 0:
+            print(str("Data plane -> Controller"))
+            print(str(int.from_bytes(pmu_data["analog"], byteorder="big")))
 
-        print(str(counter) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
+        if int.from_bytes(pmu_data["digital"], byteorder="big") != 0:
+            cntrl2dp = pmu_data["digital"] + pmu_data["chk"]
+            print(str("Controller -> Data Plane"))
+            print(str(int.from_bytes(cntrl2dp, byteorder="big")))
+            #print(pmu_data["phasors"][0]["magnitude"])
+
+
+        #print(str(counter) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
 
         """
         buffer.append(calculate_complex_voltage(pmu_data["phasors"][0]["magnitude"], pmu_data["phasors"][0]["angle"]))
