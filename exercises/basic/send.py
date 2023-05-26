@@ -13,17 +13,22 @@ sys.path.append('../')
 from utilities.pmu_csv_parser import parse_csv_data
 
 
+index = 0
 def generate_packet(time, voltage, angle, settings={"pmu_measurement_bytes": 8, "destination_ip": "192.168.0.100", "destination_port": 4712}):
     # Define the PMU packet as a byte string
     datetime_str = str(time)[:26]
-
+    global index
     try:
         dt = datetime.datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S.%f')
     except ValueError:
         dt = datetime.datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
 
     # 2 byte
-    sync = b'\xAA\x01'
+    
+    #sync = b'\xAA\x01'
+    sync = index.to_bytes(2, 'big')
+    index += 1
+
 
     # 2 byte, 44 for 32 bit values of PMU, 40 for 16 bit values of PMU
     # 36 - 8 + 8 * number of PMUs || 36 - 8 + 4 * number PMUs

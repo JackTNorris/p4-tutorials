@@ -30,7 +30,7 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
 
     # convert each field to correct data type
     pmu_packet = {
-        "sync": data[0:2],
+        "sync": int.from_bytes(data[0:2], byteorder="big"),
         "frame_size": int.from_bytes(data[2:4], byteorder="big"),
         "id_code": int.from_bytes(data[4:6], byteorder="big"),
         "soc": int.from_bytes(data[6:10], byteorder="big"),
@@ -58,6 +58,7 @@ if __name__ == "__main__":
         # print float value of pmu_packet_parser(data)["frame_size"]
         pmu_data = pmu_packet_parser(data)
         sorted_pmus.insert(pmu_data)
+        """
         if int.from_bytes(pmu_data["analog"], byteorder="big") != 0:
             print(str("Data plane -> Controller"))
             print(str(int.from_bytes(pmu_data["analog"], byteorder="big")))
@@ -67,9 +68,11 @@ if __name__ == "__main__":
             print(str("Controller -> Data Plane"))
             print(str(int.from_bytes(cntrl2dp, byteorder="big")))
             #print(pmu_data["phasors"][0]["magnitude"])
+        """
+        
 
 
-        #print(str(counter) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
+        print(str(pmu_data["sync"]) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
 
         """
         buffer.append(calculate_complex_voltage(pmu_data["phasors"][0]["magnitude"], pmu_data["phasors"][0]["angle"]))

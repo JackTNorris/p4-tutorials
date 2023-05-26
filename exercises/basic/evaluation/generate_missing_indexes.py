@@ -28,7 +28,7 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output", default = "missing-data.json")
     args = parser.parse_args()
     data_size = args.data_size
-    missing_indexes = generate_n_percent_missing(int(args.missing), int(args.data_size))
+    missing_indexes = generate_n_percent_missing(int(args.missing_percentage), int(args.data_size))
 
     with open(args.output, "w") as outfile:
         json.dump(missing_indexes, outfile, skipkeys=True, indent=4)
