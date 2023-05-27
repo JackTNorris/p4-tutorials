@@ -11,7 +11,7 @@ def generate_n_percent_missing(n_percent, data_size):
         # make sure we don't get the first 3 indexes since those should be in the switch
         while rand_index <= 2:
             rand_index = random.randrange(data_size)
-        sample.append(random.randrange(data_size))
+        sample.append(rand_index)
         #remove duplicates
         sample = list(set(sample))
     return sample
