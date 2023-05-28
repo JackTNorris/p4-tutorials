@@ -13,7 +13,7 @@ sys.path.append('../')
 from utilities.pmu_csv_parser import parse_csv_data
 
 
-index = 0
+index = 1
 def generate_packet(time, voltage, angle, settings={"pmu_measurement_bytes": 8, "destination_ip": "192.168.0.100", "destination_port": 4712}):
     # Define the PMU packet as a byte string
     datetime_str = str(time)[:26]
@@ -82,45 +82,48 @@ def generate_packet(time, voltage, angle, settings={"pmu_measurement_bytes": 8, 
     udp_socket.close()
 
 
+def parse_console_args(parser):
+    parser.add_argument('filename')
+    parser.add_argument('--ip', default="10.0.2.2")
+    parser.add_argument('--port', default=4712)
+    parser.add_argument('--num_packets', default=-1)
+    parser.add_argument('--drop_indexes', default='./evaluation/missing-data.json')
+    return parser.parse_args()
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(
                         prog='pmu-packet-sender',
                         description='Sends pmu packets',
                         epilog='Text at the bottom of help')
-    parser.add_argument('filename')
-    parser.add_argument('--ip', default="10.0.2.2")
-    parser.add_argument('--port', default=4712)
-    parser.add_argument('--num_packets', default=-1)
-    parser.add_argument('--drop_indexes', default='./evaluation/missing-data.json')
 
-    args = parser.parse_args()
+    args = parse_console_args(parser)
 
-    f = open(args.drop_indexes)
+    drop_indexes_file = open(args.drop_indexes)
 
-    drop_indexes = json.load(f)
+    drop_indexes = json.load(drop_indexes_file)
 
-    pmu_data = parse_csv_data(
+    pmu_csv_data = parse_csv_data(
         args.filename,
         "TimeTag",
         ["Magnitude01", "Magnitude02", "Magnitude03"],
         ["Angle01", "Angle02", "Angle03"]
     )
 
-    num_to_send = len(pmu_data["times"])
+    num_to_send = len(pmu_csv_data["times"])
     if int(args.num_packets) > 0:
         num_to_send = int(args.num_packets)
 
 
     for i in range(num_to_send):
         if i == 0:
-            print(pmu_data["times"][i])
+            print(pmu_csv_data["times"][i])
 
         #sending to loopback as opposed to switch
         settings_obj = {"destination_ip": "127.0.0.1" if i in drop_indexes else  args.ip, "destination_port": int(args.port)}
 
-        print(str(i+1) + " | " + "Magnitude: " + str(pmu_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_data["phase_angles"][0][i]))
+        print(str(i+1) + " | " + "Magnitude: " + str(pmu_csv_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_csv_data["phase_angles"][0][i]))
         time.sleep(0.017)
-        generate_packet(pmu_data["times"][i], pmu_data["magnitudes"][0][i], pmu_data["phase_angles"][0][i], settings_obj)
+        generate_packet(pmu_csv_data["times"][i], pmu_csv_data["magnitudes"][0][i], pmu_csv_data["phase_angles"][0][i], settings_obj)
 
     # generate_packets()

@@ -20,8 +20,21 @@ class KeySortedList:
     def retrieve_last_n(self, n):
         return self._list[-n:]
 
-    def print(self):
-        print(self._list)
+    def print_pmu(self):
+        counter = 1
+        for pmu in self._list:
+            print(str(counter) + " : " + str(pmu["sync"]) + " | " + "Magnitude: " + str(pmu["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu["phasors"][0]["angle"]))
+            counter += 1
+
+    def print_recovered(self, indexes_only):
+        for i in range(len(self._list)):
+            pmu = self._list[i]
+            #generated packet
+            if pmu["stat"] == 9:
+                if indexes_only:
+                    print(str(i) + " indexed packet was recoved")
+                else:
+                    print(str(pmu["sync"]) + " | " + "Magnitude: " + str(pmu["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu["phasors"][0]["angle"]))
 
     #TODO
     def flush():

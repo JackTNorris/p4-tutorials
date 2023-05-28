@@ -272,7 +272,6 @@ control MyIngress(inout headers hdr,
                 //SPEED_TEST: attaching local timestamp of when packets sent to control plane
                 hdr.pmu.analog = (bit<32>)standard_metadata.ingress_global_timestamp;
                 send_pmu_to_control_plane();
-                R1.write(0, (bit<32>)standard_metadata.ingress_global_timestamp);
               }
 
               update_registers();

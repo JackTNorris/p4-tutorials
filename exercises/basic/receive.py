@@ -3,10 +3,12 @@ import struct
 import math
 import sys
 from sorted_list import KeySortedList
+import signal
 
 
 UDP_IP_ADDRESS = "0.0.0.0"  # listen on all available interfaces
 UDP_PORT_NO = 4712  # PMU data port number
+sorted_pmus = KeySortedList(keyfunc = lambda pmu: pmu["soc"] + pmu["frac_sec"] / 1000000)
 
 # create a UDP socket object
 serverSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -45,19 +47,29 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
     }
 
     return pmu_packet
+
+def cntrl_c_handler(signum, frame):
+    sorted_pmus.print_pmu()
+    exit(1)
+ 
+ 
+
 # wait for incoming PMU packets
 if __name__ == "__main__":
-    counter = 0
+    signal.signal(signal.SIGINT, cntrl_c_handler)
+    received_counter = 0
     buffer = []
     predicted_magnitude = 0
     predicted_pa = 0
-    sorted_pmus = KeySortedList(keyfunc = lambda pmu: pmu["soc"] + pmu["frac_sec"] / 1000000)
     while True:
         data, addr = serverSock.recvfrom(1500)  # receive up to 1500 bytes of data
-        counter += 1
+        received_counter += 1
         # print float value of pmu_packet_parser(data)["frame_size"]
         pmu_data = pmu_packet_parser(data)
         sorted_pmus.insert(pmu_data)
+        print(str(pmu_data["sync"]) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
+
+        # for dp -> cp -> dp speed analysis
         """
         if int.from_bytes(pmu_data["analog"], byteorder="big") != 0:
             print(str("Data plane -> Controller"))
@@ -68,23 +80,4 @@ if __name__ == "__main__":
             print(str("Controller -> Data Plane"))
             print(str(int.from_bytes(cntrl2dp, byteorder="big")))
             #print(pmu_data["phasors"][0]["magnitude"])
-        """
-        
-
-
-        print(str(pmu_data["sync"]) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
-
-        """
-        buffer.append(calculate_complex_voltage(pmu_data["phasors"][0]["magnitude"], pmu_data["phasors"][0]["angle"]))
-        if counter % 3 == 0 and counter != 0:
-            complex_voltage_estimate = jpt_algo(buffer[2], buffer[1], buffer[0])
-            mag, pa = phase_angle_and_magnitude_from_complex_voltage(complex_voltage_estimate)
-            buffer = []
-            print("Next predicted magnitude: ", mag)
-            predicted_magnitude = mag
-            print("Next predicted phase angle: ", pa)
-            predicted_pa = pa
-        if counter % 4 == 0 and counter != 0:
-            print("Approximation error for magnitude: ", calculate_approximation_error(pmu_data["phasors"][0]["magnitude"] , predicted_magnitude))
-            print("Approximation error for angle: ", calculate_approximation_error(pmu_data["phasors"][0]["angle"], predicted_pa))
         """
