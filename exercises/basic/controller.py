@@ -102,12 +102,12 @@ def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored
         new_frac = last_stored_fracsec + 16666
         complex_voltage_estimate = jpt_algo(jpt_inputs[0], jpt_inputs[1], jpt_inputs[2])
         generated_mag, generated_pa = phase_angle_and_magnitude_from_complex_voltage(complex_voltage_estimate)
-        if (new_frac) / 1000000 > 1:
-            new_frac = (new_frac + 16666) % 1000000
+        if (new_frac) / 1000000 >= 1:
+            new_frac = (new_frac) % 1000000
             new_soc = new_soc + 1
 
         #make sure not generating too many
-        #print(str((curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac)))
+        print(str((curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac)))
         if (curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac) > 16000:
             generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
 
