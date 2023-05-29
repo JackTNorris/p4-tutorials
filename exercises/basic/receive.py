@@ -4,7 +4,7 @@ import math
 import sys
 from sorted_list import KeySortedList
 import signal
-
+import argparse
 
 UDP_IP_ADDRESS = "0.0.0.0"  # listen on all available interfaces
 UDP_PORT_NO = 4712  # PMU data port number
@@ -48,20 +48,30 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
 
     return pmu_packet
 
+#stuff you want to print out if you have to cntrl-c out of program due to error
 def cntrl_c_handler(signum, frame):
     sorted_pmus.print_pmu()
     exit(1)
  
- 
+
+def parse_console_args(parser):
+    parser.add_argument('terminate_after', type=int, help='Number of packets to receive before terminating')
+    return parser.parse_args()
+
 
 # wait for incoming PMU packets
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+                        prog='pmu-packet-receiver',
+                        description='Receives pmu packets',
+                        epilog='Text at the bottom of help')
+    args = parse_console_args(parser)
     signal.signal(signal.SIGINT, cntrl_c_handler)
     received_counter = 0
     buffer = []
     predicted_magnitude = 0
     predicted_pa = 0
-    while True:
+    while received_counter < args.terminate_after:
         data, addr = serverSock.recvfrom(1500)  # receive up to 1500 bytes of data
         received_counter += 1
         # print float value of pmu_packet_parser(data)["frame_size"]

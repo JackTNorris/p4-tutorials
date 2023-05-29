@@ -270,7 +270,7 @@ control MyIngress(inout headers hdr,
               if(frac_sec_diff > 20000 && temp_soc != 0) //gives a bit of "breathing room" for measurements
               {
                 //SPEED_TEST: attaching local timestamp of when packets sent to control plane
-                hdr.pmu.analog = (bit<32>)standard_metadata.ingress_global_timestamp;
+                /*hdr.pmu.analog = (bit<32>)standard_metadata.ingress_global_timestamp;*/
                 send_pmu_to_control_plane();
               }
 
@@ -279,8 +279,10 @@ control MyIngress(inout headers hdr,
             else
             {
               //SPEED_TEST: attaching local timestamp of arrival from control plane
+              /*
               hdr.pmu.digital = (bit<16>)(standard_metadata.ingress_global_timestamp >> 16);
               hdr.pmu.chk = (bit<16>)standard_metadata.ingress_global_timestamp;
+              */
             }
 
 

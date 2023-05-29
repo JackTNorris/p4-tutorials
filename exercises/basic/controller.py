@@ -13,11 +13,14 @@ from statistics import mean, stdev
 import threading
 from collections import namedtuple
 from sorted_list import KeySortedList
+import argparse
 
 #TODO: replace hardcoded values like 16000 and 17000 with values derived from Frequency
 
 counter = 0
 buffer = []
+missing_packet_counter = 0
+
 class SimpleSwitchAPI(runtime_CLI.RuntimeAPI):
     @staticmethod
     def get_thrift_services():
@@ -30,9 +33,19 @@ class SimpleSwitchAPI(runtime_CLI.RuntimeAPI):
 
 
 pmu_recovery_data_buffer = KeySortedList(keyfunc = lambda obj: obj["timestamp"])
-#adding in the first coupe measurements for JPT
+
+def parse_console_args(parser):
+    parser.add_argument('terminate_after', type=int, help='Number of packets to generate before terminating')
+    return parser.parse_args()
 
 def main():
+    parser = argparse.ArgumentParser(
+                    prog='pmu-system-controller',
+                    description='Receives pmu packets',
+                    epilog='Text at the bottom of help')
+    
+    cmd_args = parse_console_args(parser)
+
     args = runtime_CLI.get_parser().parse_args()
 
     args.pre = runtime_CLI.PreType.SimplePreLAG
@@ -49,9 +62,9 @@ def main():
         args.pre, standard_client, mc_client, sswitch_client)
 
     ######### Call the function listen_for_digest below #########
-    listen_for_digests(runtime_api)
+    listen_for_digests(runtime_api, cmd_args.terminate_after)
 
-def listen_for_digests(controller):
+def listen_for_digests(controller, terminate_after):
     sub = nnpy.Socket(nnpy.AF_SP, nnpy.SUB)
     socket = controller.client.bm_mgmt_get_info().notifications_socket
     #s1 = Pair0()
@@ -60,7 +73,7 @@ def listen_for_digests(controller):
     sub.connect(socket)
     sub.setsockopt(nnpy.SUB, nnpy.SUB_SUBSCRIBE, '')
     #### Define the controller logic below ###
-    while True:
+    while missing_packet_counter < terminate_after:
         message = sub.recv()
         #print(message)
         on_message_recv(message, controller)
@@ -233,7 +246,6 @@ def calc_missing_packet_count(curr_soc, curr_fracsec, last_stored_soc, last_stor
 
 mag_approx_errors = []
 angle_approx_errors = []
-missing_packet_counter = 0
 def on_message_recv(msg, controller):
     _, _, ctx_id, list_id, buffer_id, num = struct.unpack("<iQiiQi", msg[:32])
     ### Insert the receiving logic below ###
