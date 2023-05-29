@@ -52,7 +52,7 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
 def cntrl_c_handler(signum, frame):
     sorted_pmus.print_pmu()
     exit(1)
- 
+
 
 def parse_console_args(parser):
     parser.add_argument('terminate_after', type=int, help='Number of packets to receive before terminating')
@@ -77,8 +77,7 @@ if __name__ == "__main__":
         # print float value of pmu_packet_parser(data)["frame_size"]
         pmu_data = pmu_packet_parser(data)
         sorted_pmus.insert(pmu_data)
-        print(str(pmu_data["sync"]) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
-
+        #print(str(received_counter) + " : " + str(pmu_data["sync"]) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
         # for dp -> cp -> dp speed analysis
         """
         if int.from_bytes(pmu_data["analog"], byteorder="big") != 0:
@@ -91,3 +90,4 @@ if __name__ == "__main__":
             print(str(int.from_bytes(cntrl2dp, byteorder="big")))
             #print(pmu_data["phasors"][0]["magnitude"])
         """
+        sorted_pmus.print_pmu()

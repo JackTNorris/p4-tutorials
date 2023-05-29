@@ -39,14 +39,14 @@ def parse_console_args(parser):
     return parser.parse_args()
 
 def main():
-    parser = argparse.ArgumentParser(
-                    prog='pmu-system-controller',
-                    description='Receives pmu packets',
-                    epilog='Text at the bottom of help')
-    
-    cmd_args = parse_console_args(parser)
 
-    args = runtime_CLI.get_parser().parse_args()
+
+    #cmd_args = parse_console_args(parser)
+
+    parser = runtime_CLI.get_parser()
+    parser.add_argument('--terminate_after', type=int, help='Number of packets to generate before terminating')
+
+    args = parser.parse_args()
 
     args.pre = runtime_CLI.PreType.SimplePreLAG
 
@@ -62,7 +62,7 @@ def main():
         args.pre, standard_client, mc_client, sswitch_client)
 
     ######### Call the function listen_for_digest below #########
-    listen_for_digests(runtime_api, cmd_args.terminate_after)
+    listen_for_digests(runtime_api, args.terminate_after)
 
 def listen_for_digests(controller, terminate_after):
     sub = nnpy.Socket(nnpy.AF_SP, nnpy.SUB)
@@ -120,7 +120,7 @@ def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored
             new_soc = new_soc + 1
 
         #make sure not generating too many
-        print(str((curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac)))
+        #print(str((curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac)))
         if (curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac) > 16000:
             generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
 
