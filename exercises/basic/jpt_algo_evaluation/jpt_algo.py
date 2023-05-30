@@ -78,9 +78,9 @@ def calculate_angle_statistics(exact_measurements, approximate_measurements):
         ex = np.array([exact_measurements[i].real, exact_measurements[i].imag])
         app = np.array([approximate_measurements[i].real, approximate_measurements[i].imag])
         dot_product = np.dot(ex, app)
-        angle =    math.acos(dot_product / (abs(exact_measurements[i]) * abs(approximate_measurements[i])))
+        angle =  math.degrees(math.acos(dot_product / (np.linalg.norm(ex) * np.linalg.norm(app))))
         angle_deviations.append(angle)
-    return mean(angle_deviations), stdev(angle_deviations), max(angle_deviations) - min(angle_deviations)
+    return mean(angle_deviations)#, stdev(angle_deviations), max(angle_deviations) - min(angle_deviations)
 
 def calculate_complex_voltage_set(magnitudes, phase_angles):
     complex_voltage_set = []
