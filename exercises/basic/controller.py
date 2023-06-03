@@ -325,7 +325,7 @@ if __name__ == "__main__":
     digest_message_thread.start()
 
     #does some stuff when a digest is received
-    listen_for_new_digests(digest_message_queue, runtime_api)
+    listen_for_new_digests(digest_message_queue)
 
 
 
