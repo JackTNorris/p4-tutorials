@@ -52,12 +52,14 @@ def pmu_packet_parser(data, settings={"pmu_measurement_bytes": 8, "num_phasors":
 
 #stuff you want to print out if you have to cntrl-c out of program due to error
 def cntrl_c_handler(signum, frame):
-    sorted_pmus.print_pmu()
+    sorted_pmus.write_to_csv("error.csv")
     exit(1)
 
 
 def parse_console_args(parser):
-    parser.add_argument('terminate_after', type=int, help='Number of packets to receive before terminating')
+    parser.add_argument('filename', help='file to print results')
+    parser.add_argument('--terminate_after', type=int, help='Number of packets to receive before terminating')
+
     return parser.parse_args()
 
 
@@ -85,6 +87,7 @@ def listen_for_pmu_queue(q, terminate_after):
         q.task_done()
     sorted_pmus.print_pmu()
 
+
 # wait for incoming PMU packets
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -103,3 +106,6 @@ if __name__ == "__main__":
     listen_for_pmu_queue(raw_pmu_packet_queue, args.terminate_after)
 
     Thread.join(raw_pmu_packet_receiver_thread)
+
+    serverSock.close()
+    sorted_pmus.write_to_csv(args.filename)

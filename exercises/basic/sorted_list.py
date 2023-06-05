@@ -1,5 +1,7 @@
 from bisect import bisect_left
-
+import sys
+import csv
+from jpt_algo_evaluation.jpt_algo import calculate_complex_voltage
 #creates ascending order sorted list (no duplicates). inserts items in O(n)
 class KeySortedList:
     def __init__(self, key=None,  keyfunc=lambda v: v):
@@ -36,6 +38,21 @@ class KeySortedList:
                     print(str(i + 1) + " indexed packet was recoved")
                 else:
                     print(str(pmu["sync"]) + " | " + "Magnitude: " + str(pmu["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu["phasors"][0]["angle"]))
+
+    def write_to_csv(self, filename):
+        headers = ["index", "magnitude", "phase_angle", "is_predicted"]
+        csv_obj = [headers]
+        for i in range(len(self._list)):
+            pmu = self._list[i]
+            csv_obj.append(
+                [
+                 i,
+                 pmu["phasors"][0]["magnitude"],
+                 pmu["phasors"][0]["angle"],
+                 pmu["stat"] == 9])
+        with open(filename, 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerows(csv_obj)
 
     #TODO
     def flush():
