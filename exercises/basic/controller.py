@@ -86,14 +86,6 @@ def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored
             #time.sleep(.017)
 
 
-        """
-        print("sending packet with: ")
-        print("soc: " + str(new_soc))
-        print("frac: " + str(new_frac))
-        print("magnitude: " + str(generated_mag))
-        print("phase_angle: " + str(generated_pa))
-        """
-
         last_stored_soc = new_soc
         last_stored_fracsec = new_frac
         jpt_inputs = [complex_voltage_estimate] + jpt_inputs[0:2]

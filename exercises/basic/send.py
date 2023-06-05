@@ -11,7 +11,7 @@ import argparse
 import json
 sys.path.append('../')
 from utilities.pmu_csv_parser import parse_csv_data
-
+from datetime import datetime
 
 index = 0
 def generate_packet(time, voltage, angle, settings={"pmu_measurement_bytes": 8, "destination_ip": "192.168.0.100", "destination_port": 4712}):
@@ -19,9 +19,9 @@ def generate_packet(time, voltage, angle, settings={"pmu_measurement_bytes": 8, 
     datetime_str = str(time)[:26]
     global index
     try:
-        dt = datetime.datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S.%f')
+        dt = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S.%f')
     except ValueError:
-        dt = datetime.datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
+        dt = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
 
     # 2 byte
 
@@ -39,7 +39,7 @@ def generate_packet(time, voltage, angle, settings={"pmu_measurement_bytes": 8, 
 
     # 4 byte
     soc = int(dt.strftime("%s")).to_bytes(4, 'big')
-    print(dt.strftime("%s"))
+    #print(dt.strftime("%s"))
     # 4 byte
     frac_sec = dt.microsecond.to_bytes(4, 'big')
     # 2 byte (no errors)
@@ -114,17 +114,16 @@ if __name__ == "__main__":
     if int(args.num_packets) > 0:
         num_to_send = int(args.num_packets)
 
-
     for i in range(num_to_send):
         if i == 0:
-            print(pmu_csv_data["times"][i])
+            print("Start transmission at: " + str(datetime.now()))
 
         #sending to loopback as opposed to switch
         #settings_obj = {"destination_ip": "127.0.0.1" if i in drop_indexes else  args.ip, "destination_port": int(args.port)}
         settings_obj = {"destination_ip": args.ip, "destination_port": int(args.port)}
-        print(str(i+1) + " | " + "Magnitude: " + str(pmu_csv_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_csv_data["phase_angles"][0][i]))
+        #print(str(i+1) + " | " + "Magnitude: " + str(pmu_csv_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_csv_data["phase_angles"][0][i]))
         time.sleep(0.017)
         if not (i in drop_indexes):
             generate_packet(pmu_csv_data["times"][i], pmu_csv_data["magnitudes"][0][i], pmu_csv_data["phase_angles"][0][i], settings_obj)
-
+    print("Finished sending  " + str(i) + " packets")
     # generate_packets()

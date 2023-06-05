@@ -7,6 +7,7 @@ import signal
 import argparse
 from threading import Thread
 from queue import Queue
+from datetime import datetime
 
 UDP_IP_ADDRESS = "0.0.0.0"  # listen on all available interfaces
 UDP_PORT_NO = 4712  # PMU data port number
@@ -70,12 +71,13 @@ def queue_pmu_packets(q, terminate_after):
         data, addr = serverSock.recvfrom(1500)  # receive up to 1500 bytes of data
         received_counter += 1
         q.put(data)
+    print("Receieved " + str(received_counter) + " packets")
 
 def process_pmu_packet(raw_pmu_packet, received_counter):
     global sorted_pmus
     pmu_data = pmu_packet_parser(raw_pmu_packet)
     sorted_pmus.insert(pmu_data)
-    print(str(received_counter) + " : " + str(pmu_data["sync"]) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
+    #print(str(received_counter) + " : " + str(pmu_data["sync"]) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
 
 
 def listen_for_pmu_queue(q, terminate_after):
@@ -85,7 +87,7 @@ def listen_for_pmu_queue(q, terminate_after):
         event_data = q.get()
         process_pmu_packet(event_data, received_counter)
         q.task_done()
-    sorted_pmus.print_pmu()
+    #sorted_pmus.print_pmu()
 
 
 # wait for incoming PMU packets
@@ -106,6 +108,8 @@ if __name__ == "__main__":
     listen_for_pmu_queue(raw_pmu_packet_queue, args.terminate_after)
 
     Thread.join(raw_pmu_packet_receiver_thread)
+    print("Received all packets at: " + str(datetime.now()))
 
     serverSock.close()
     sorted_pmus.write_to_csv(args.filename)
+
