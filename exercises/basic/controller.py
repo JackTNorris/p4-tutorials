@@ -11,12 +11,10 @@ from statistics import mean, stdev
 from sorted_list import KeySortedList
 from threading import Thread
 from queue import Queue
-
+import time
 
 #TODO: replace hardcoded values like 16000 and 17000 with values derived from Frequency
 
-counter = 0
-buffer = []
 missing_packet_counter = 0
 
 class SimpleSwitchAPI(runtime_CLI.RuntimeAPI):
@@ -38,8 +36,6 @@ def queue_digests(terminate_after, digest_queue, sub):
     while missing_packet_counter < terminate_after:
         message = sub.recv()
         digest_queue.put(message)
-        #print(message)
-        #on_digest_recv(message, controller)
 
 
 def parse_phasors(phasor_data, settings={"num_phasors": 1, "pmu_measurement_bytes": 8}):
@@ -87,6 +83,8 @@ def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored
         #print(str((curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac)))
         if (curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac) > 16000:
             generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
+            #time.sleep(.017)
+
 
         """
         print("sending packet with: ")
@@ -208,9 +206,6 @@ def calc_missing_packet_count(curr_soc, curr_fracsec, last_stored_soc, last_stor
     return missing_packet_count
 
 
-mag_approx_errors = []
-angle_approx_errors = []
-
 def on_digest_recv(msg):
     _, _, ctx_id, list_id, buffer_id, num = struct.unpack("<iQiiQi", msg[:32])
     ### Insert the receiving logic below ###
@@ -225,16 +220,10 @@ def on_digest_recv(msg):
 
     # For listening the next digest
     for m in range(num):
-        global counter
-        global buffer
-        global mag_approx_errors
-        global angle_approx_errors
         global pmu_recovery_data_buffer
         global missing_packet_counter
         jpt_inputs = []
         msg_copy = msg[0:]
-        new_soc = 0
-        new_frac_sec = 0
         last_stored_soc = 0
         last_stored_fracsec = 0
         # extracting phasor data from digest messages
@@ -247,8 +236,6 @@ def on_digest_recv(msg):
             pmu_recovery_data_buffer.insert({"timestamp": soc + frac / 1000000, "magnitude": phasor[0]["magnitude"], "phase_angle": phasor[0]["angle"]})
             #top of receive stack =     most recent measurement
             if j == 0:
-                new_soc = soc
-                new_frac = frac + 16666
                 last_stored_soc = soc
                 last_stored_fracsec = frac
 
@@ -272,13 +259,12 @@ def on_digest_recv(msg):
         print("NUM MISSING TOTAL: " + str(missing_packet_counter))
 
 
+
         if len(jpt_inputs) > 2:
             generate_new_packets("s1-eth2", missing_packets, jpt_inputs, last_stored_soc, last_stored_fracsec, curr_soc, curr_fracsec)
+
         #move to next digest packet
         msg = msg[offset:]
-
-def parse_thread_args(obj):
-    return obj[0]
 
 def setup():
     parser = runtime_CLI.get_parser()
@@ -326,7 +312,3 @@ if __name__ == "__main__":
 
     #does some stuff when a digest is received
     listen_for_new_digests(digest_message_queue)
-
-
-
-

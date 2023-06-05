@@ -5,6 +5,8 @@ import sys
 from sorted_list import KeySortedList
 import signal
 import argparse
+from threading import Thread
+from queue import Queue
 
 UDP_IP_ADDRESS = "0.0.0.0"  # listen on all available interfaces
 UDP_PORT_NO = 4712  # PMU data port number
@@ -59,6 +61,30 @@ def parse_console_args(parser):
     return parser.parse_args()
 
 
+#queue pmu packets for processing
+def queue_pmu_packets(q, terminate_after):
+    received_counter = 0
+    while received_counter < terminate_after:
+        data, addr = serverSock.recvfrom(1500)  # receive up to 1500 bytes of data
+        received_counter += 1
+        q.put(data)
+
+def process_pmu_packet(raw_pmu_packet, received_counter):
+    global sorted_pmus
+    pmu_data = pmu_packet_parser(raw_pmu_packet)
+    sorted_pmus.insert(pmu_data)
+    print(str(received_counter) + " : " + str(pmu_data["sync"]) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
+
+
+def listen_for_pmu_queue(q, terminate_after):
+    received_counter = 0
+    while received_counter < terminate_after:
+        received_counter += 1
+        event_data = q.get()
+        process_pmu_packet(event_data, received_counter)
+        q.task_done()
+    sorted_pmus.print_pmu()
+
 # wait for incoming PMU packets
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -67,27 +93,13 @@ if __name__ == "__main__":
                         epilog='Text at the bottom of help')
     args = parse_console_args(parser)
     signal.signal(signal.SIGINT, cntrl_c_handler)
-    received_counter = 0
-    buffer = []
-    predicted_magnitude = 0
-    predicted_pa = 0
-    while received_counter < args.terminate_after:
-        data, addr = serverSock.recvfrom(1500)  # receive up to 1500 bytes of data
-        received_counter += 1
-        # print float value of pmu_packet_parser(data)["frame_size"]
-        pmu_data = pmu_packet_parser(data)
-        sorted_pmus.insert(pmu_data)
-        #print(str(received_counter) + " : " + str(pmu_data["sync"]) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
-        # for dp -> cp -> dp speed analysis
-        """
-        if int.from_bytes(pmu_data["analog"], byteorder="big") != 0:
-            print(str("Data plane -> Controller"))
-            print(str(int.from_bytes(pmu_data["analog"], byteorder="big")))
 
-        if int.from_bytes(pmu_data["digital"], byteorder="big") != 0:
-            cntrl2dp = pmu_data["digital"] + pmu_data["chk"]
-            print(str("Controller -> Data Plane"))
-            print(str(int.from_bytes(cntrl2dp, byteorder="big")))
-            #print(pmu_data["phasors"][0]["magnitude"])
-        """
-        sorted_pmus.print_pmu()
+    raw_pmu_packet_queue = Queue()
+
+    raw_pmu_packet_receiver_thread = Thread(target=queue_pmu_packets, args=(raw_pmu_packet_queue, args.terminate_after))
+    raw_pmu_packet_receiver_thread.daemon = True
+    raw_pmu_packet_receiver_thread.start()
+
+    listen_for_pmu_queue(raw_pmu_packet_queue, args.terminate_after)
+
+    Thread.join(raw_pmu_packet_receiver_thread)
