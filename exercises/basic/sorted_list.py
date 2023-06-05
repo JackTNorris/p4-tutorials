@@ -26,13 +26,14 @@ class KeySortedList:
             print(str(counter) + " : " + str(pmu["sync"]) + " | " + "Magnitude: " + str(pmu["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu["phasors"][0]["angle"]))
             counter += 1
 
+            #index starts at 1
     def print_recovered(self, indexes_only):
         for i in range(len(self._list)):
             pmu = self._list[i]
             #generated packet
             if pmu["stat"] == 9:
                 if indexes_only:
-                    print(str(i) + " indexed packet was recoved")
+                    print(str(i + 1) + " indexed packet was recoved")
                 else:
                     print(str(pmu["sync"]) + " | " + "Magnitude: " + str(pmu["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu["phasors"][0]["angle"]))
 

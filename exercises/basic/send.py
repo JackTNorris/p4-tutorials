@@ -13,7 +13,7 @@ sys.path.append('../')
 from utilities.pmu_csv_parser import parse_csv_data
 
 
-index = 1
+index = 0
 def generate_packet(time, voltage, angle, settings={"pmu_measurement_bytes": 8, "destination_ip": "192.168.0.100", "destination_port": 4712}):
     # Define the PMU packet as a byte string
     datetime_str = str(time)[:26]
@@ -24,7 +24,7 @@ def generate_packet(time, voltage, angle, settings={"pmu_measurement_bytes": 8, 
         dt = datetime.datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
 
     # 2 byte
-    
+
     #sync = b'\xAA\x01'
     sync = index.to_bytes(2, 'big')
     index += 1
@@ -120,10 +120,11 @@ if __name__ == "__main__":
             print(pmu_csv_data["times"][i])
 
         #sending to loopback as opposed to switch
-        settings_obj = {"destination_ip": "127.0.0.1" if i in drop_indexes else  args.ip, "destination_port": int(args.port)}
-
+        #settings_obj = {"destination_ip": "127.0.0.1" if i in drop_indexes else  args.ip, "destination_port": int(args.port)}
+        settings_obj = {"destination_ip": args.ip, "destination_port": int(args.port)}
         print(str(i+1) + " | " + "Magnitude: " + str(pmu_csv_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_csv_data["phase_angles"][0][i]))
         time.sleep(0.017)
-        generate_packet(pmu_csv_data["times"][i], pmu_csv_data["magnitudes"][0][i], pmu_csv_data["phase_angles"][0][i], settings_obj)
+        if not (i in drop_indexes):
+            generate_packet(pmu_csv_data["times"][i], pmu_csv_data["magnitudes"][0][i], pmu_csv_data["phase_angles"][0][i], settings_obj)
 
     # generate_packets()

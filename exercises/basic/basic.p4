@@ -83,6 +83,7 @@ struct jpt_pmu_triplet_t {
   bit<64>   phasors2;
   bit<32>   curr_soc;
   bit<32>   curr_fracsec;
+  //bit<16>   sync0;
 }
 struct metadata {
     jpt_pmu_triplet_t jpt_packet;
@@ -170,6 +171,8 @@ control MyIngress(inout headers hdr,
     bit<32> new_reg3;
     bit<32> new_reg2;
 
+    bit<32> digest_counter;
+
     bit<32> temp_mag;
     bit<32> temp_ang;
 
@@ -210,6 +213,7 @@ control MyIngress(inout headers hdr,
         magnitude_regs.read(temp_mag, (bit<32>)0);
         phase_angle_regs.read(temp_ang, (bit<32>)0);
         meta.jpt_packet.phasors0 = temp_mag ++ temp_ang;
+        //meta.jpt_packet.sync0 = hdr.pmu.sync;
         soc_regs.read(meta.jpt_packet.soc0, (bit<32>)0);
         frac_sec_regs.read(meta.jpt_packet.fracsec0, (bit<32>)0);
 
@@ -258,9 +262,12 @@ control MyIngress(inout headers hdr,
         if (hdr.ipv4.isValid()) {
             bit<32> temp_soc;
             bit<32> temp_frac_sec;
-            //if generated packet
+            //if not generated packet
             if(hdr.pmu.stat == (bit<16>)0x0)
             {
+              R1.read(digest_counter, 0);
+              digest_counter = digest_counter +  1;
+              R1.write(0, digest_counter);
               soc_regs.read(temp_soc, (bit<32>)0);
               frac_sec_regs.read(temp_frac_sec, (bit<32>)0);
 
@@ -284,8 +291,6 @@ control MyIngress(inout headers hdr,
               hdr.pmu.chk = (bit<16>)standard_metadata.ingress_global_timestamp;
               */
             }
-
-
             ipv4_lpm.apply();
         }
     }
@@ -324,7 +329,7 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
               hdr.ipv4.dstAddr },
             hdr.ipv4.hdrChecksum,
             HashAlgorithm.csum16);
-
+        /*
           update_checksum_with_payload(
           hdr.udp.isValid(),
               {
@@ -334,7 +339,7 @@ control MyComputeChecksum(inout headers  hdr, inout metadata meta) {
               },
             hdr.udp.checksum,
             HashAlgorithm.csum16);
-
+        */
     }
 }
 
