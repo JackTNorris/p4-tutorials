@@ -40,7 +40,7 @@ class KeySortedList:
                     print(str(pmu["sync"]) + " | " + "Magnitude: " + str(pmu["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu["phasors"][0]["angle"]))
 
     def write_to_csv(self, filename):
-        headers = ["index", "magnitude", "phase_angle", "is_predicted"]
+        headers = ["index", "magnitude", "phase_angle", "is_predicted", "received_at"]
         csv_obj = [headers]
         for i in range(len(self._list)):
             pmu = self._list[i]
@@ -49,7 +49,8 @@ class KeySortedList:
                  i,
                  pmu["phasors"][0]["magnitude"],
                  pmu["phasors"][0]["angle"],
-                 pmu["stat"] == 9])
+                 pmu["stat"] == 9,
+                 pmu["received_at"]])
         with open(filename, 'w', newline='') as file:
             writer = csv.writer(file)
             writer.writerows(csv_obj)

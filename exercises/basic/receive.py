@@ -76,6 +76,7 @@ def queue_pmu_packets(q, terminate_after):
 def process_pmu_packet(raw_pmu_packet, received_counter):
     global sorted_pmus
     pmu_data = pmu_packet_parser(raw_pmu_packet)
+    pmu_data["received_at"] = datetime.now()
     sorted_pmus.insert(pmu_data)
     #print(str(received_counter) + " : " + str(pmu_data["sync"]) + " | " + "Magnitude: " + str(pmu_data["phasors"][0]["magnitude"]) + " | Phase_angle: " + str(pmu_data["phasors"][0]["angle"]))
 
