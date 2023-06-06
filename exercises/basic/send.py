@@ -130,8 +130,8 @@ if __name__ == "__main__":
         #settings_obj = {"destination_ip": args.ip, "destination_port": int(args.port)}
         #print(str(i+1) + " | " + "Magnitude: " + str(pmu_csv_data["magnitudes"][0][i]) + " | Phase_angle: " + str(pmu_csv_data["phase_angles"][0][i]))
         time.sleep(0.017)
-        if not (i in drop_indexes):
-            generate_packet(pmu_csv_data["times"][i], pmu_csv_data["magnitudes"][0][i], pmu_csv_data["phase_angles"][0][i], settings_obj)
+        #if not (i in drop_indexes):
+        generate_packet(pmu_csv_data["times"][i], pmu_csv_data["magnitudes"][0][i], pmu_csv_data["phase_angles"][0][i], settings_obj)
     print("Finished sending  " + str(i + 1) + " packets")
     with open(args.time_sent_file, 'w', newline='') as file:
         writer = csv.writer(file)
