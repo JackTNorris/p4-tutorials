@@ -285,8 +285,8 @@ def setup():
 
     return runtime_api, args.terminate_after, sub
 
-def listen_for_new_digests(q):
-    while True:
+def listen_for_new_digests(q, terminate_after):
+    while missing_packet_counter < terminate_after:
         event_data = q.get()
         on_digest_recv(event_data)
         q.task_done()
@@ -303,4 +303,4 @@ if __name__ == "__main__":
     digest_message_thread.start()
 
     #does some stuff when a digest is received
-    listen_for_new_digests(digest_message_queue)
+    listen_for_new_digests(digest_message_queue, terminate_after)
