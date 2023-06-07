@@ -32,14 +32,17 @@ def parse_send_file(file_path):
     sent_at_times = list(map(lambda t: datetime.strptime(t, "%Y-%m-%d %H:%M:%S.%f"), data["sent_at"].values))
     return sent_at_times
 
-def calculate_packet_end_to_end(sent_at_times, received_at_times, generated_indexes):
+def calculate_packet_end_to_end(sent_at_times, received_at_times, generated_indexes, generated_only = True):
     #function to account for sleep time included for generated packets
     end_to_end_times = []
     for i in range(len(sent_at_times)):
         end_to_end_time = timedelta.total_seconds(received_at_times[i] - sent_at_times[i])
         if i in generated_indexes:
             end_to_end_time -= sleep_time_seconds
-        end_to_end_times.append(end_to_end_time)
+            if generated_only:
+                end_to_end_times.append(end_to_end_time)
+        if not generated_only:
+            end_to_end_times.append(end_to_end_time)
     return end_to_end_times
 
 if __name__ == "__main__":
@@ -54,4 +57,5 @@ if __name__ == "__main__":
             print(i)
     print("Mean time: " + str(mean(end_to_end_times)))
     print("Smallest time: " + str(min(end_to_end_times)))
+    print("Max time: " + str(max(end_to_end_times)))
     print("Std dev: " + str(stdev(end_to_end_times)))
