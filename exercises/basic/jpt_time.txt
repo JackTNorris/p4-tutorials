@@ -1,0 +1,660 @@
+  2527Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.00018645833333333334
+STD DEV JPT TIME: 0.00014327372379148247
+MIN: 2.2e-05
+MAX: 0.000758
+  2605Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.00015164948453608246
+STD DEV JPT TIME: 0.0001091014475573378
+MIN: 2e-05
+MAX: 0.000494
+  2664Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.000138
+STD DEV JPT TIME: 0.00010353489835463676
+MIN: 1.7e-05
+MAX: 0.000577
+  2714Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.000178
+STD DEV JPT TIME: 0.00012482833340437106
+MIN: 2e-05
+MAX: 0.0006
+  2766Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.00015818333333333332
+STD DEV JPT TIME: 0.00013515634729743115
+MIN: 2e-05
+MAX: 0.000889
+  2812Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.00011630388692579506
+STD DEV JPT TIME: 9.489736646579396e-05
+MIN: 1.8e-05
+MAX: 0.000615
+  2859Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.00012601863354037268
+STD DEV JPT TIME: 0.0001024346290775929
+MIN: 2e-05
+MAX: 0.000774
+  2910Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.00011222788203753351
+STD DEV JPT TIME: 9.68854166099572e-05
+MIN: 1.7e-05
+MAX: 0.000668
+  2957Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.00010782168674698795
+STD DEV JPT TIME: 9.58710739147796e-05
+MIN: 1.6e-05
+MAX: 0.000593
+  3007Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.00010206787330316742
+STD DEV JPT TIME: 8.572521046517824e-05
+MIN: 1.7e-05
+MAX: 0.000544
+  3071Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.00011847817047817048
+STD DEV JPT TIME: 0.00011084179811776427
+MIN: 1.6e-05
+MAX: 0.000945
+  3120Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.000135939736346516
+STD DEV JPT TIME: 0.0001210114455179569
+MIN: 1.7e-05
+MAX: 0.001196
+  3170Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 9.538938053097345e-05
+STD DEV JPT TIME: 9.245896479365789e-05
+MIN: 1.6e-05
+MAX: 0.000744
+  3217Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.00012694719471947194
+STD DEV JPT TIME: 0.00011421348945696202
+MIN: 1.8e-05
+MAX: 0.000842
+  3273Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 9.906623586429725e-05
+STD DEV JPT TIME: 9.77344189183625e-05
+MIN: 1.7e-05
+MAX: 0.001328
+  3323Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 5.32481426448737e-05
+STD DEV JPT TIME: 4.782451117693683e-05
+MIN: 1.7e-05
+MAX: 0.000349
+  3372Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 5.694602272727273e-05
+STD DEV JPT TIME: 5.646036070769232e-05
+MIN: 1.5e-05
+MAX: 0.000532
+  3421Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 7.509617918313571e-05
+STD DEV JPT TIME: 7.116742290547993e-05
+MIN: 1.6e-05
+MAX: 0.000438
+  3489Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.00010417069892473119
+STD DEV JPT TIME: 0.00010921970474580051
+MIN: 1.6e-05
+MAX: 0.001374
+  3538Calling target program-options parser
+Adding interface s1-eth1 as port 1
+Adding interface s1-eth2 as port 2
+Obtaining JSON from switch...
+Done
+Control utility for runtime P4 table manipulation
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:01:01/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:01:11	00:01
+Entry has been added with handle 0
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:02:02/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:02:22	00:02
+Entry has been added with handle 1
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:03:03/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:03:00	00:03
+Entry has been added with handle 2
+RuntimeCmd: Adding entry to lpm match table MyIngress.ipv4_lpm
+match key:           LPM-0a:00:04:04/32
+action:              MyIngress.ipv4_forward
+runtime data:        08:00:00:00:04:00	00:04
+Entry has been added with handle 3
+RuntimeCmd: 
+[H[JObtaining JSON from switch...
+Done
+AVERAGE JPT TIME: 0.00011459367088607595
+STD DEV JPT TIME: 9.642485314809519e-05
+MIN: 1.7e-05
+MAX: 0.000797

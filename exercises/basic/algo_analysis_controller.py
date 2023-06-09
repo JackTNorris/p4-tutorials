@@ -252,7 +252,7 @@ def on_digest_recv(msg):
         missing_packets = calc_missing_packet_count(curr_soc, curr_fracsec, last_stored_soc, last_stored_fracsec)
 
         missing_packet_counter += missing_packets
-        print("NUM MISSING TOTAL: " + str(missing_packet_counter))
+        #print("NUM MISSING TOTAL: " + str(missing_packet_counter))
 
 
 
@@ -284,7 +284,7 @@ def setup():
 
     sub = nnpy.Socket(nnpy.AF_SP, nnpy.SUB)
     socket = runtime_api.client.bm_mgmt_get_info().notifications_socket
-    print("socket is : " + str(socket))
+    #print("socket is : " + str(socket))
     sub.connect(socket)
     sub.setsockopt(nnpy.SUB, nnpy.SUB_SUBSCRIBE, '')
 
