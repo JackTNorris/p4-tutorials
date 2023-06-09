@@ -30,7 +30,7 @@ def parse_send_file(file_path):
     sent_at_times = list(map(lambda t: datetime.strptime(t, "%Y-%m-%d %H:%M:%S.%f"), data["sent_at"].values))
     return sent_at_times
 
-def calculate_packet_end_to_end(sent_at_times, received_at_times, generated_indexes, generated_only = True):
+def calculate_packet_end_to_end(sent_at_times, received_at_times, generated_indexes, generated_only = False):
     #function to account for sleep time included for generated packets
     end_to_end_times = []
     for i in range(len(sent_at_times)):
@@ -50,11 +50,13 @@ def extract_avg_and_range_times(sent_file, received_file):
 if __name__ == "__main__":
     fig, ax = plt.subplots(1, 1, figsize=(10, 10))
 
-    x = [1, 2, 5, 10, 20]
+    x = []
+    for i in range(20):
+        x.append(i + 1)
     y = []
     errors = []
     for i in x:
-        avg, sd, mn, mx = extract_avg_and_range_times("sent-" + str(i) + "pct.csv", "received-" + str(i) + "pct.csv")
+        avg, sd, mn, mx = extract_avg_and_range_times("sent-" + str(i) + "-pct.csv", "received-" + str(i) + "-pct.csv")
         y.append(avg)
         errors.append(sd)
         print("Average for " + str(i) + "%: " + str(avg))
