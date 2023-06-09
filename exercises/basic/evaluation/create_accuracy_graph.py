@@ -7,13 +7,13 @@ from jpt_algo_evaluation.jpt_algo import calculate_complex_voltage, jpt_algo, ph
 
 if __name__ == "__main__":
     truthy_pmu_csv_data = parse_csv_data(
-        '../pmu8_10k.csv',
+        '../pmu8_5k.csv',
         "TimeTag",
         ["Magnitude01", "Magnitude02", "Magnitude03"],
         ["Angle01", "Angle02", "Angle03"]
     )
     received_pmu_data = parse_csv_data(
-        "../10pct.csv",
+        "5k/received-10-pct.csv",
         "index",
         ["magnitude", ],
         ["phase_angle"]
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     ax[2].scatter(index, y_truthy, color="g", label="actual", s=1)
     ax[0].set_title("Ground Truth Values")
     ax[1].set_title("Received Values (10% loss)")
-    ax[1].set_title("Comparison")
+    ax[2].set_title("Comparison of Ground Truth and Received Values (10% loss)")
     
 
     print(y_truthy)
