@@ -58,10 +58,14 @@ def calculate_approximation_error(exact, approximate):
     return abs(exact - approximate) / exact * 100
 
 #calculate the average, std deviation, and range of approximation errors
-def calculate_approximation_error_statistics(exact_measurements, approximate_measurements):
+def calculate_approximation_error_statistics(exact_measurements, approximate_measurements, generated_indexes = None):
     approximation_errors = []
-    for i in range(len(exact_measurements)):
-        approximation_errors.append(calculate_approximation_error(exact_measurements[i], approximate_measurements[i]))
+    if generated_indexes is not None:
+        for i in generated_indexes:
+            approximation_errors.append(calculate_approximation_error(exact_measurements[i], approximate_measurements[i]))
+    else:
+        for i in range(len(exact_measurements)):
+            approximation_errors.append(calculate_approximation_error(exact_measurements[i], approximate_measurements[i]))
 
     return mean(approximation_errors), stdev(approximation_errors), max(approximation_errors) - min(approximation_errors)
 
