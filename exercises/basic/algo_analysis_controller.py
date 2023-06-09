@@ -17,7 +17,9 @@ from datetime import datetime
 #TODO: replace hardcoded values like 16000 and 17000 with values derived from Frequency
 
 missing_packet_counter = 0
+
 jpt_times = []
+
 class SimpleSwitchAPI(runtime_CLI.RuntimeAPI):
     @staticmethod
     def get_thrift_services():
@@ -74,10 +76,7 @@ def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored
     for i in range(num_packets):
         new_soc = last_stored_soc
         new_frac = last_stored_fracsec + 16666
-        start_algo_time = datetime.now()
         complex_voltage_estimate = jpt_algo(jpt_inputs[0], jpt_inputs[1], jpt_inputs[2])
-        end_algo_time = datetime.now()
-        jpt_times.append((end_algo_time - start_algo_time).total_seconds())
         generated_mag, generated_pa = phase_angle_and_magnitude_from_complex_voltage(complex_voltage_estimate)
         if (new_frac) / 1000000 >= 1:
             new_frac = (new_frac) % 1000000
@@ -214,8 +213,9 @@ def on_digest_recv(msg):
     # the extra 8 here is for the most current timestamp
     offset = controller_phasor_info_packet_length * controller_phasor_info_packet_count + 8
 
-    # For listening the next digest
+    # parsing digest messages
     for m in range(num):
+        start_algo_time = datetime.now()
         global pmu_recovery_data_buffer
         global missing_packet_counter
         jpt_inputs = []
@@ -258,7 +258,8 @@ def on_digest_recv(msg):
 
         if len(jpt_inputs) > 2:
             generate_new_packets("s1-eth2", missing_packets, jpt_inputs, last_stored_soc, last_stored_fracsec, curr_soc, curr_fracsec)
-
+            end_algo_time = datetime.now()
+            jpt_times.append((end_algo_time - start_algo_time).total_seconds())
         #move to next digest packet
         msg = msg[offset:]
 
@@ -296,7 +297,6 @@ def listen_for_new_digests(q, terminate_after):
         q.task_done()
 
 if __name__ == "__main__":
-    global jpt_alg
     runtime_api, terminate_after, sub = setup()
 
 
@@ -311,3 +311,5 @@ if __name__ == "__main__":
 
     print("AVERAGE JPT TIME: " + str(mean(jpt_times)))
     print("STD DEV JPT TIME: " + str(stdev(jpt_times)))
+    print("MIN: " + str(min(jpt_times)))
+    print("MAX: " + str(max(jpt_times)))
