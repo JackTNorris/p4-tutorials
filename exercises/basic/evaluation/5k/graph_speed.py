@@ -45,7 +45,7 @@ def calculate_packet_end_to_end(sent_at_times, received_at_times, generated_inde
 
 def extract_avg_and_range_times(sent_file, received_file):
     end_to_end_times = calculate_packet_end_to_end(parse_send_file(sent_file), parse_receive_file(received_file), extract_generated_packet_indexes(received_file))
-    return mean(end_to_end_times), stdev(end_to_end_times)
+    return mean(end_to_end_times), stdev(end_to_end_times), min(end_to_end_times), max(end_to_end_times)
 
 if __name__ == "__main__":
     fig, ax = plt.subplots(1, 1, figsize=(10, 10))
@@ -54,11 +54,13 @@ if __name__ == "__main__":
     y = []
     errors = []
     for i in x:
-        avg, sd = extract_avg_and_range_times("sent-" + str(i) + "pct.csv", "received-" + str(i) + "pct.csv")
+        avg, sd, mn, mx = extract_avg_and_range_times("sent-" + str(i) + "pct.csv", "received-" + str(i) + "pct.csv")
         y.append(avg)
         errors.append(sd)
         print("Average for " + str(i) + "%: " + str(avg))
         print("Std dev for " + str(i) + "%: " + str(sd))
+        print("Min for " + str(i) + "%: " + str(mn))
+        print("Max for " + str(i) + "%: " + str(mx))
 
 
     ax.errorbar(x, y, yerr=errors, fmt='o')
