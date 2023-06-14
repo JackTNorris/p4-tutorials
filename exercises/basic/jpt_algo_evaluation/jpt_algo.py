@@ -67,7 +67,7 @@ def calculate_approximation_error_statistics(exact_measurements, approximate_mea
         for i in range(len(exact_measurements)):
             approximation_errors.append(calculate_approximation_error(exact_measurements[i], approximate_measurements[i]))
 
-    return mean(approximation_errors), stdev(approximation_errors), max(approximation_errors) - min(approximation_errors)
+    return mean(approximation_errors), stdev(approximation_errors), max(approximation_errors)
 
 def calculate_angle_error(exact, approximate):
     ex = np.array([exact.real, exact.imag])
@@ -83,14 +83,22 @@ def calculate_angle_statistics(exact_measurements, approximate_measurements, gen
             ex = np.array([exact_measurements[i].real, exact_measurements[i].imag])
             app = np.array([approximate_measurements[i].real, approximate_measurements[i].imag])
             dot_product = np.dot(ex, app)
-            angle =  math.degrees(math.acos(dot_product / (np.linalg.norm(ex) * np.linalg.norm(app))))
+            if dot_product / (np.linalg.norm(ex) * np.linalg.norm(app)) > 1:
+                angle = 0
+            else:
+                angle =  math.degrees(math.acos(dot_product / (np.linalg.norm(ex) * np.linalg.norm(app))))
             angle_deviations.append(angle)
+            if angle > 50:
+                print("issue with: ")
     else:
         for i in range(len(approximate_measurements)):
             ex = np.array([exact_measurements[i].real, exact_measurements[i].imag])
             app = np.array([approximate_measurements[i].real, approximate_measurements[i].imag])
             dot_product = np.dot(ex, app)
-            angle =  math.degrees(math.acos(dot_product / (np.linalg.norm(ex) * np.linalg.norm(app))))
+            if dot_product / (np.linalg.norm(ex) * np.linalg.norm(app)) > 1:
+                angle = 0
+            else:
+                angle =  math.degrees(math.acos(dot_product / (np.linalg.norm(ex) * np.linalg.norm(app))))
             angle_deviations.append(angle)
     return mean(angle_deviations), stdev(angle_deviations), max(angle_deviations)
 
