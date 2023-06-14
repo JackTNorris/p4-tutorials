@@ -82,6 +82,7 @@ def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored
         #make sure not generating too many
         #print(str((curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac)))
         if (curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac) > 16000:
+            pmu_recovery_data_buffer.insert({"timestamp": new_soc + new_frac / 1000000, "magnitude": generated_mag, "phase_angle": generated_pa})
             generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
             #time.sleep(.017)
 
@@ -226,7 +227,7 @@ def on_digest_recv(msg):
 
 
             pmu_recovery_data_buffer.insert({"timestamp": soc + frac / 1000000, "magnitude": phasor[0]["magnitude"], "phase_angle": phasor[0]["angle"]})
-            #top of receive stack =     most recent measurement
+            #top of receive stack = most recent measurement
             if j == 0:
                 last_stored_soc = soc
                 last_stored_fracsec = frac

@@ -85,6 +85,7 @@ def generate_new_packets(interface, num_packets, initial_jpt_inputs, last_stored
         #make sure not generating too many
         #print(str((curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac)))
         if (curr_soc * 1000000 + curr_fracsec) - (new_soc * 1000000 + new_frac) > 16000:
+            pmu_recovery_data_buffer.insert({"timestamp": new_soc + new_frac / 1000000, "magnitude": generated_mag, "phase_angle": generated_pa})
             generate_new_packet("s1-eth2", new_soc, new_frac, generated_mag, generated_pa)
             #time.sleep(.017)
 
@@ -259,6 +260,7 @@ def on_digest_recv(msg):
         if len(jpt_inputs) > 2:
             generate_new_packets("s1-eth2", missing_packets, jpt_inputs, last_stored_soc, last_stored_fracsec, curr_soc, curr_fracsec)
             end_algo_time = datetime.now()
+            print("ALGO EXECUTION TIME: " + str((end_algo_time - start_algo_time).total_seconds()))
             jpt_times.append((end_algo_time - start_algo_time).total_seconds())
         #move to next digest packet
         msg = msg[offset:]
@@ -308,8 +310,9 @@ if __name__ == "__main__":
 
     #does some stuff when a digest is received
     listen_for_new_digests(digest_message_queue, terminate_after)
-
+    """
     print("AVERAGE JPT TIME: " + str(mean(jpt_times)))
     print("STD DEV JPT TIME: " + str(stdev(jpt_times)))
     print("MIN: " + str(min(jpt_times)))
     print("MAX: " + str(max(jpt_times)))
+    """
