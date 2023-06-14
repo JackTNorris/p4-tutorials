@@ -76,15 +76,23 @@ def calculate_angle_error(exact, approximate):
     angle =    math.acos(dot_product / (abs(exact) * abs(approximate)))
     return angle
 
-def calculate_angle_statistics(exact_measurements, approximate_measurements):
+def calculate_angle_statistics(exact_measurements, approximate_measurements, generated_indexes = None):
     angle_deviations = []
-    for i in range(len(approximate_measurements)):
-        ex = np.array([exact_measurements[i].real, exact_measurements[i].imag])
-        app = np.array([approximate_measurements[i].real, approximate_measurements[i].imag])
-        dot_product = np.dot(ex, app)
-        angle =  math.degrees(math.acos(dot_product / (np.linalg.norm(ex) * np.linalg.norm(app))))
-        angle_deviations.append(angle)
-    return mean(angle_deviations)#, stdev(angle_deviations), max(angle_deviations) - min(angle_deviations)
+    if generated_indexes is not None:
+        for i in generated_indexes:
+            ex = np.array([exact_measurements[i].real, exact_measurements[i].imag])
+            app = np.array([approximate_measurements[i].real, approximate_measurements[i].imag])
+            dot_product = np.dot(ex, app)
+            angle =  math.degrees(math.acos(dot_product / (np.linalg.norm(ex) * np.linalg.norm(app))))
+            angle_deviations.append(angle)
+    else:
+        for i in range(len(approximate_measurements)):
+            ex = np.array([exact_measurements[i].real, exact_measurements[i].imag])
+            app = np.array([approximate_measurements[i].real, approximate_measurements[i].imag])
+            dot_product = np.dot(ex, app)
+            angle =  math.degrees(math.acos(dot_product / (np.linalg.norm(ex) * np.linalg.norm(app))))
+            angle_deviations.append(angle)
+    return mean(angle_deviations), stdev(angle_deviations), max(angle_deviations)
 
 def calculate_complex_voltage_set(magnitudes, phase_angles):
     complex_voltage_set = []

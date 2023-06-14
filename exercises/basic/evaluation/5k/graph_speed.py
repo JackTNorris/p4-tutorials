@@ -30,7 +30,7 @@ def parse_send_file(file_path):
     sent_at_times = list(map(lambda t: datetime.strptime(t, "%Y-%m-%d %H:%M:%S.%f"), data["sent_at"].values))
     return sent_at_times
 
-def calculate_packet_end_to_end(sent_at_times, received_at_times, generated_indexes, generated_only = False):
+def calculate_packet_end_to_end(sent_at_times, received_at_times, generated_indexes, generated_only = True):
     #function to account for sleep time included for generated packets
     end_to_end_times = []
     for i in range(len(sent_at_times)):
