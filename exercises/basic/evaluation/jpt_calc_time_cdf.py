@@ -10,9 +10,10 @@ if __name__ == "__main__":
         lines = [line.rstrip() for line in file]
         lines = list(map(lambda x: float(x.split("ALGO EXECUTION TIME: ")[1]), lines))
     #plt.hist(lines, bins=20, cumulative=True, density=True, histtype='step', label='CDF')
+    plt.figure(figsize=(10, 5))
     plt.plot(np.sort(lines), np.linspace(0, 1, len(lines)), '--k', color='red', label='Curved CDF')
-    plt.xlabel('Local Controller Compuatation Time (s)')
-    plt.ylabel('Cumulative Probability')
+    plt.xlabel('Local Controller Computation Time (s)', fontsize=15)
+    plt.ylabel('Cumulative Probability', fontsize=15)
 
     # Show the legend
 

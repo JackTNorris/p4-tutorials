@@ -73,7 +73,8 @@ if __name__ == "__main__":
             #std_dev_angle_set.append(std_dev_ang)
 
 
-    fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
+    
     
     
 
@@ -88,27 +89,33 @@ if __name__ == "__main__":
 
     plt.grid()
     
-    """
+    
     #print(average_angle_std_dev)
     #ax.errorbar(percent_missing_set, average_magnitude_errors, yerr=average_magnitude_std_dev, color="g", label="actual", fmt='o', ecolor='g', capthick=2)
+    
     ax.plot(percent_missing_set, average_magnitude_errors, color="g", label="actual")
+    ax.scatter(percent_missing_set, average_magnitude_errors, color="b", s=30)
+
     #a, b = np.polyfit(percent_missing_set, avg_error_set, 1)
     #ax[0].plot(percent_missing_set, a*np.array(percent_missing_set) + b, color="r", label="linear fit")
-    ax.set_xlabel("Missing Data Rate (%)", fontsize=13)
-    ax.set_ylabel("Magnitude MAPE (%)", fontsize=13)
+    ax.set_xlabel("Missing Data Rate (%)", fontsize=15)
+    ax.set_ylabel("Magnitude MAPE (%)", fontsize=15)
     plt.savefig('../figures/aggregate-accuracy-magnitude.pdf',format = 'pdf')
+    
+    
+    
+    
     """
-    
-    
-    
     #ax[1].errorbar(percent_missing_set, average_angle_errors, yerr=average_angle_std_dev, color="g", label="actual", fmt='o', ecolor='g', capthick=2)
     ax.plot(percent_missing_set, average_angle_errors, color="g", label="actual")
+    ax.scatter(percent_missing_set, average_angle_errors, color="b", s=30)
+
     #a, b = np.polyfit(percent_missing_set, avg_angle_error_set, 1)
     #ax[1].plot(percent_missing_set, a*np.array(percent_missing_set) + b, color="r", label="linear fit")
-    ax.set_xlabel("Missing Data Rate (%)", fontsize=13)
-    ax.set_ylabel("Phase Angle Error (Degrees)", fontsize=13)
+    ax.set_xlabel("Missing Data Rate (%)", fontsize=15)
+    ax.set_ylabel("Phase Angle Error (Degrees)", fontsize=15)
     plt.savefig('../figures/aggregate-accuracy-angle.pdf',format = 'pdf')
-    
+    """
     
 
     plt.show()

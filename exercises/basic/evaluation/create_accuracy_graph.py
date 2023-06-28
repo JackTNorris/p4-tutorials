@@ -35,14 +35,14 @@ if __name__ == "__main__":
     magnitude_truthy = truthy_pmu_csv_data["magnitudes"][0]
     magnitude_received = received_pmu_data["magnitudes"][0]
     index = received_pmu_data["times"]
-    fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
 
     
-    ax.plot(index, magnitude_received, color="r", label="predicted")
-    ax.plot(index, magnitude_truthy, color="g", label="actual")
-    ax.set_xlabel("Packet Index", fontsize=13)
-    ax.set_ylabel("Magnitude (Volts)", fontsize=13)
-    ax.legend()
+    ax.plot(index, magnitude_received, color="r", label="Recovered Data")
+    ax.plot(index, magnitude_truthy, color="g", label="Actual Measurement")
+    ax.set_xlabel("Packet Index", fontsize=15)
+    ax.set_ylabel("Magnitude (Volts)", fontsize=15)
+    ax.legend(fontsize=15)
     plt.grid()
     plt.savefig('figures/' + str(pct_missing) + '-pct-accuracy-magnitude.pdf', format='pdf')
     plt.show()
@@ -59,11 +59,11 @@ if __name__ == "__main__":
     angle_received = received_pmu_data["phase_angles"][0]
 
     
-    ax.plot(index, angle_received, color="r", label="predicted")
-    ax.plot(index, angle_truthy, color="g", label="actual", linestyle='dashed', dashes=(10, 10))
-    ax.set_xlabel("Packet Index", fontsize=13)
-    ax.set_ylabel("Phase Angle (Degrees)", fontsize=13)
-    ax.legend()
+    ax.plot(index, angle_received, color="r", label="Recovered Data")
+    ax.plot(index, angle_truthy, color="g", label="Actual Measurement", linestyle='dashed', dashes=(10, 10))
+    ax.set_xlabel("Packet Index", fontsize=15)
+    ax.set_ylabel("Phase Angle (Degrees)", fontsize=15)
+    ax.legend(fontsize=15)
     
 
     complex_phasors_received = []

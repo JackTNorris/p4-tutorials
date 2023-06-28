@@ -49,7 +49,7 @@ def extract_avg_and_range_times(sent_file, received_file):
     return mean(end_to_end_times), stdev(end_to_end_times), min(end_to_end_times), max(end_to_end_times)
 
 if __name__ == "__main__":
-    fig, ax = plt.subplots(1, 1, figsize=(10, 10))
+    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
 
     x = []
     for z in range(20):
