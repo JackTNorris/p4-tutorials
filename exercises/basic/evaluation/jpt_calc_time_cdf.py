@@ -11,9 +11,8 @@ if __name__ == "__main__":
         lines = list(map(lambda x: float(x.split("ALGO EXECUTION TIME: ")[1]), lines))
     #plt.hist(lines, bins=20, cumulative=True, density=True, histtype='step', label='CDF')
     plt.plot(np.sort(lines), np.linspace(0, 1, len(lines)), '--k', color='red', label='Curved CDF')
-    plt.xlabel('Local Controller Compuatation Time')
+    plt.xlabel('Local Controller Compuatation Time (s)')
     plt.ylabel('Cumulative Probability')
-    plt.title('Local Controller Computation Time CDF')
 
     # Show the legend
 

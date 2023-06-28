@@ -8,6 +8,7 @@ import numpy as np
 
 sleep_time_seconds = 0.017
 
+trials = 4
 
 def parse_receive_file(file_path):
     data = pd.read_csv(file_path)
@@ -30,7 +31,7 @@ def parse_send_file(file_path):
     sent_at_times = list(map(lambda t: datetime.strptime(t, "%Y-%m-%d %H:%M:%S.%f"), data["sent_at"].values))
     return sent_at_times
 
-def calculate_packet_end_to_end(sent_at_times, received_at_times, generated_indexes, generated_only = False):
+def calculate_packet_end_to_end(sent_at_times, received_at_times, generated_indexes, generated_only = True):
     #function to account for sleep time included for generated packets
     end_to_end_times = []
     for i in range(len(sent_at_times)):
@@ -51,26 +52,27 @@ if __name__ == "__main__":
     fig, ax = plt.subplots(1, 1, figsize=(10, 10))
 
     x = []
-    for i in range(10):
-        x.append(i + 1)
-    y = []
-    errors = []
-    for i in x:
-        avg, sd, mn, mx = extract_avg_and_range_times("trial-1/sent-" + str(i) + "-pct.csv", "trial-1/received-" + str(i) + "-pct.csv")
-        y.append(avg)
-        errors.append(sd)
-        print("Average for " + str(i) + "%: " + str(avg))
-        print("Std dev for " + str(i) + "%: " + str(sd))
-        print("Min for " + str(i) + "%: " + str(mn))
-        print("Max for " + str(i) + "%: " + str(mx))
+    for z in range(20):
+        x.append(z)
+    all_average_speeds = []
+    all_average_errors = []
+    for trial in range(trials):
+        for i in x:
+            y = []
+            errors = []
+            avg, sd, mn, mx = extract_avg_and_range_times("trial-" + str(trial + 1) + "/sent-" + str(i + 1) + "-pct.csv", "trial-" + str(trial + 1) + "/received-" + str(i + 1) + "-pct.csv")
+            y.append(avg)
+            errors.append(sd)
+            print("Average for " + str(i + 1) + "%: " + str(avg))
+            print("Std dev for " + str(i + 1) + "%: " + str(sd))
+            print("Min for " + str(i + 1) + "%: " + str(mn))
+            print("Max for " + str(i + 1) + "%: " + str(mx))
 
 
-    #ax.errorbar(x, y, yerr=errors, fmt='o')
-    ax.plot(x, y)
-    ax.set_xlabel("Missing Data Rate (%)")
-    ax.set_ylabel("Average Single Packet End-to-End Time (s)")
-    plt.grid()
-    plt.savefig("../figures/5k-packet-loss-rate.pdf", format="pdf")
+    ax.errorbar(x, y, yerr=errors, fmt='o')
+    ax.set_title("Average End-to-End Time vs. Packet Loss Rate")
+    ax.set_xlabel("Packet Loss Rate (%)")
+    ax.set_ylabel("Average End-to-End Time (s)")
     plt.show()
 
 

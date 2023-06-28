@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 from jpt_algo_evaluation.jpt_algo import calculate_complex_voltage, calculate_angle_statistics, calculate_approximation_error_statistics
 from statistics import mean, stdev, median
 
-pct_missing = 10
-trial = 2
+pct_missing = 5
+trial = 1
 def extract_generated_packet_indexes(received_data_file_path):
     data = pd.read_csv(received_data_file_path)
     is_predicted_list = list(data["is_predicted"].values)
@@ -31,35 +31,40 @@ if __name__ == "__main__":
         ["phase_angle"]
     )
     
+    
     magnitude_truthy = truthy_pmu_csv_data["magnitudes"][0]
     magnitude_received = received_pmu_data["magnitudes"][0]
     index = received_pmu_data["times"]
-    fig, ax = plt.subplots(2, 1, figsize=(10, 10))
+    fig, ax = plt.subplots(1, 1, figsize=(10, 10))
 
-    ax[0].plot(index, magnitude_received, color="r", label="predicted")
-    ax[0].plot(index, magnitude_truthy, color="g", label="actual")
-    ax[0].set_title("Comparison of Ground Truth and Received Magnitude Values (" + str(pct_missing) + "% loss)")
-    ax[0].set_xlabel("Index")
-    ax[0].set_ylabel("Magnitude (Volts)")
-    ax[0].legend()
+    """
+    ax.plot(index, magnitude_received, color="r", label="predicted")
+    ax.plot(index, magnitude_truthy, color="g", label="actual")
+    ax.set_xlabel("Packet Index")
+    ax.set_ylabel("Magnitude (Volts)")
+    ax.legend()
+    plt.grid()
+    plt.savefig('figures/' + str(pct_missing) + '-pct-accuracy-magnitude.pdf', format='pdf')
+    plt.show()
+    """
+
     
     average_mag_error, std_dev_mag, max_mag_error = calculate_approximation_error_statistics(magnitude_truthy, magnitude_received, generated_indexes=extract_generated_packet_indexes("5k/trial-" + str(trial) + "/received-" + str(pct_missing) + "-pct.csv"))
     x = []
     for i in range(len(magnitude_truthy)):
         x.append(magnitude_truthy[i]- magnitude_received[i])
-    print("Average magnitude error: " + str(mean(x)))
-    print("Standard deviation: " + str(stdev(x)))
-    print("Max error: " + str(max(x)))
+        if magnitude_truthy[i]- magnitude_received[i] > 1000:
+            print(i)
     angle_truthy = truthy_pmu_csv_data["phase_angles"][0]
     angle_received = received_pmu_data["phase_angles"][0]
 
-    ax[1].plot(index, angle_received, color="r", label="predicted")
-    ax[1].plot(index, angle_truthy, color="g", label="actual")
-    ax[1].set_title("Comparison of Ground Truth and Received Phase Angle Values (" + str(pct_missing) + "% loss)")
-    ax[1].set_xlabel("Index")
-    ax[1].set_ylabel("Phase Angle (Degrees)")
-    ax[1].legend()
-
+    
+    ax.plot(index, angle_received, color="r", label="predicted")
+    ax.plot(index, angle_truthy, color="g", label="actual", linestyle='dashed', dashes=(10, 10))
+    ax.set_xlabel("Packet Index")
+    ax.set_ylabel("Phase Angle (Degrees)")
+    ax.legend()
+    
 
     complex_phasors_received = []
     complex_phasors_truthy = []
@@ -82,10 +87,12 @@ if __name__ == "__main__":
     print("Max error: " + str(max_error_ang))
     
 
+    plt.ylim(-180, 180)
+    plt.yticks([-180, -135, -90, -45, 0, 45, 90, 135, 180])
     plt.grid()
-    plt.savefig('figures/10-pct-accuracy.pdf', format='pdf')
+    plt.savefig('figures/' + str(pct_missing) + '-pct-accuracy-angle.pdf', format='pdf')
     plt.show()
-
+    
 
 
 
