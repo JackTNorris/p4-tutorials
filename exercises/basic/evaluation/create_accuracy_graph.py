@@ -37,18 +37,18 @@ if __name__ == "__main__":
     index = received_pmu_data["times"]
     fig, ax = plt.subplots(1, 1, figsize=(10, 10))
 
-    """
+    
     ax.plot(index, magnitude_received, color="r", label="predicted")
     ax.plot(index, magnitude_truthy, color="g", label="actual")
-    ax.set_xlabel("Packet Index")
-    ax.set_ylabel("Magnitude (Volts)")
+    ax.set_xlabel("Packet Index", fontsize=13)
+    ax.set_ylabel("Magnitude (Volts)", fontsize=13)
     ax.legend()
     plt.grid()
     plt.savefig('figures/' + str(pct_missing) + '-pct-accuracy-magnitude.pdf', format='pdf')
     plt.show()
-    """
-
     
+
+    """
     average_mag_error, std_dev_mag, max_mag_error = calculate_approximation_error_statistics(magnitude_truthy, magnitude_received, generated_indexes=extract_generated_packet_indexes("5k/trial-" + str(trial) + "/received-" + str(pct_missing) + "-pct.csv"))
     x = []
     for i in range(len(magnitude_truthy)):
@@ -61,8 +61,8 @@ if __name__ == "__main__":
     
     ax.plot(index, angle_received, color="r", label="predicted")
     ax.plot(index, angle_truthy, color="g", label="actual", linestyle='dashed', dashes=(10, 10))
-    ax.set_xlabel("Packet Index")
-    ax.set_ylabel("Phase Angle (Degrees)")
+    ax.set_xlabel("Packet Index", fontsize=13)
+    ax.set_ylabel("Phase Angle (Degrees)", fontsize=13)
     ax.legend()
     
 
@@ -92,7 +92,7 @@ if __name__ == "__main__":
     plt.grid()
     plt.savefig('figures/' + str(pct_missing) + '-pct-accuracy-angle.pdf', format='pdf')
     plt.show()
-    
+    """
 
 
 

@@ -67,10 +67,10 @@ if __name__ == "__main__":
 
     #ax.errorbar(x, y, yerr=errors, fmt='o')
     ax.plot(x, y)
-    ax.set_xlabel("Missing Data Rate (%)")
-    ax.set_ylabel("Average Single Packet End-to-End Time (s)")
+    ax.set_xlabel("Missing Data Rate (%)", fontsize=13)
+    ax.set_ylabel("Average Single Packet End-to-End Time (s)", fontsize=13)
     plt.grid()
-    plt.savefig("../figures/5k-packet-loss-rate.pdf", format="pdf")
+    plt.savefig("../figures/5k-packet-speed.pdf", format="pdf")
     plt.show()
 
 
