@@ -49,7 +49,7 @@ def extract_avg_and_range_times(sent_file, received_file):
     return mean(end_to_end_times), stdev(end_to_end_times), min(end_to_end_times), max(end_to_end_times)
 
 if __name__ == "__main__":
-    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
+    fig, ax = plt.subplots(1, 1, figsize=(10,3.5))
 
     x = []
     for z in range(20):
@@ -68,7 +68,8 @@ if __name__ == "__main__":
             print("Min for " + str(i + 1) + "%: " + str(mn))
             print("Max for " + str(i + 1) + "%: " + str(mx))
 
-
+    plt.yticks(fontsize=15)
+    plt.xticks(fontsize=15)
     ax.errorbar(x, y, yerr=errors, fmt='o')
     ax.set_title("Average End-to-End Time vs. Packet Loss Rate")
     ax.set_xlabel("Packet Loss Rate (%)")

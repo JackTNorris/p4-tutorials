@@ -35,20 +35,24 @@ if __name__ == "__main__":
     magnitude_truthy = truthy_pmu_csv_data["magnitudes"][0]
     magnitude_received = received_pmu_data["magnitudes"][0]
     index = received_pmu_data["times"]
-    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
-
+    fig, ax = plt.subplots(1, 1, figsize=(10,3.5))
+    plt.tight_layout()
+    plt.subplots_adjust(left=0.1, bottom=0.15)
     
+    """
     ax.plot(index, magnitude_received, color="r", label="Recovered Data")
     ax.plot(index, magnitude_truthy, color="g", label="Actual Measurement")
     ax.set_xlabel("Packet Index", fontsize=15)
     ax.set_ylabel("Magnitude (Volts)", fontsize=15)
+    plt.yticks(fontsize=15)
+    plt.xticks(fontsize=15)
     ax.legend(fontsize=15)
     plt.grid()
     plt.savefig('figures/' + str(pct_missing) + '-pct-accuracy-magnitude.pdf', format='pdf')
     plt.show()
-    
-
     """
+
+    
     average_mag_error, std_dev_mag, max_mag_error = calculate_approximation_error_statistics(magnitude_truthy, magnitude_received, generated_indexes=extract_generated_packet_indexes("5k/trial-" + str(trial) + "/received-" + str(pct_missing) + "-pct.csv"))
     x = []
     for i in range(len(magnitude_truthy)):
@@ -58,7 +62,8 @@ if __name__ == "__main__":
     angle_truthy = truthy_pmu_csv_data["phase_angles"][0]
     angle_received = received_pmu_data["phase_angles"][0]
 
-    
+    plt.yticks(fontsize=15)
+    plt.xticks(fontsize=15)
     ax.plot(index, angle_received, color="r", label="Recovered Data")
     ax.plot(index, angle_truthy, color="g", label="Actual Measurement", linestyle='dashed', dashes=(10, 10))
     ax.set_xlabel("Packet Index", fontsize=15)
@@ -92,7 +97,7 @@ if __name__ == "__main__":
     plt.grid()
     plt.savefig('figures/' + str(pct_missing) + '-pct-accuracy-angle.pdf', format='pdf')
     plt.show()
-    """
+    
 
 
 

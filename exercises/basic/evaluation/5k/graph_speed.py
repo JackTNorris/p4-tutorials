@@ -48,7 +48,8 @@ def extract_avg_and_range_times(sent_file, received_file):
     return mean(end_to_end_times), stdev(end_to_end_times), min(end_to_end_times), max(end_to_end_times)
 
 if __name__ == "__main__":
-    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
+    fig, ax = plt.subplots(1, 1, figsize=(10, 3.5))
+
 
     x = []
     for i in range(10):
@@ -66,9 +67,15 @@ if __name__ == "__main__":
 
 
     #ax.errorbar(x, y, yerr=errors, fmt='o')
-    ax.plot(x, y)
+    ax.plot(x, y, color="g")
+    ax.scatter(x, y, color="b", s=30)
     ax.set_xlabel("Missing Data Rate (%)", fontsize=15)
-    ax.set_ylabel("Average Single Packet End-to-End Time (s)", fontsize=15)
+    ax.set_ylabel("Avg. Packet E2E Time (s)", fontsize=15)
+    
+    plt.tight_layout()
+    plt.subplots_adjust(left=0.1)
+    plt.yticks(fontsize=15)
+    plt.xticks(fontsize=15)
     plt.grid()
     plt.savefig("../figures/5k-packet-speed.pdf", format="pdf")
     plt.show()

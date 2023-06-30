@@ -67,14 +67,17 @@ if __name__ == "__main__":
             average_magnitude_std_dev[i].append(std_dev)
             #avg_error_set.append(average)
             avg_ang, std_dev_ang, max_erro_ang = calculate_angle_statistics(complex_truthy, complex_received, generated_data_indexes[i])
+            print(i)
+            print(avg_ang)
             #avg_angle_error_set.append(avg_ang)
             average_angle_errors[i].append(avg_ang)
             average_angle_std_dev[i].append(std_dev_ang)
             #std_dev_angle_set.append(std_dev_ang)
 
 
-    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
-    
+    fig, ax = plt.subplots(1, 1, figsize=(10,3.5))
+    plt.yticks(fontsize=15)
+    plt.xticks(fontsize=15)
     
     
 
@@ -84,28 +87,31 @@ if __name__ == "__main__":
     average_magnitude_std_dev = list(map(lambda error_set: mean(error_set), average_magnitude_std_dev))
     average_angle_std_dev = list(map(lambda error_set: mean(error_set), average_angle_std_dev))
 
-    print(average_magnitude_std_dev)
-    print(average_angle_std_dev)    
+    #print(average_magnitude_std_dev)
+    #print(average_angle_std_dev)    
 
     plt.grid()
-    
+    plt.tight_layout()
+    plt.subplots_adjust(left=0.1, bottom=.15)
     
     #print(average_angle_std_dev)
     #ax.errorbar(percent_missing_set, average_magnitude_errors, yerr=average_magnitude_std_dev, color="g", label="actual", fmt='o', ecolor='g', capthick=2)
     
+    """
     ax.plot(percent_missing_set, average_magnitude_errors, color="g", label="actual")
     ax.scatter(percent_missing_set, average_magnitude_errors, color="b", s=30)
 
     #a, b = np.polyfit(percent_missing_set, avg_error_set, 1)
     #ax[0].plot(percent_missing_set, a*np.array(percent_missing_set) + b, color="r", label="linear fit")
+
     ax.set_xlabel("Missing Data Rate (%)", fontsize=15)
     ax.set_ylabel("Magnitude MAPE (%)", fontsize=15)
     plt.savefig('../figures/aggregate-accuracy-magnitude.pdf',format = 'pdf')
-    
-    
-    
-    
     """
+    
+    
+    
+    
     #ax[1].errorbar(percent_missing_set, average_angle_errors, yerr=average_angle_std_dev, color="g", label="actual", fmt='o', ecolor='g', capthick=2)
     ax.plot(percent_missing_set, average_angle_errors, color="g", label="actual")
     ax.scatter(percent_missing_set, average_angle_errors, color="b", s=30)
@@ -115,7 +121,7 @@ if __name__ == "__main__":
     ax.set_xlabel("Missing Data Rate (%)", fontsize=15)
     ax.set_ylabel("Phase Angle Error (Degrees)", fontsize=15)
     plt.savefig('../figures/aggregate-accuracy-angle.pdf',format = 'pdf')
-    """
+    
     
 
     plt.show()
