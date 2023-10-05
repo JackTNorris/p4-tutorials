@@ -105,6 +105,7 @@ def main():
 
     sleep(1)
 
+    
     if args.switch_config is not None:
         print()
         print("Reading switch configuration script:", args.switch_config)
@@ -117,7 +118,7 @@ def main():
 
         print("Configuration complete.")
         print()
-
+    
     print("Ready !")
 
     if args.cli_message is not None:

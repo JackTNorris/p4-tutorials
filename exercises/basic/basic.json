@@ -1227,7 +1227,7 @@
                       },
                       "right" : {
                         "type" : "hexstr",
-                        "value" : "0x00000001ffffffff"
+                        "value" : "0x00000000ffffffff"
                       }
                     }
                   }
@@ -1401,7 +1401,7 @@
                       },
                       "right" : {
                         "type" : "hexstr",
-                        "value" : "0x00000001ffffffff"
+                        "value" : "0x00000000ffffffff"
                       }
                     }
                   }
@@ -1575,7 +1575,7 @@
                       },
                       "right" : {
                         "type" : "hexstr",
-                        "value" : "0x00000001ffffffff"
+                        "value" : "0x00000000ffffffff"
                       }
                     }
                   }
@@ -1893,7 +1893,7 @@
                       },
                       "right" : {
                         "type" : "hexstr",
-                        "value" : "0x00000001ffffffff"
+                        "value" : "0x00000000ffffffff"
                       }
                     }
                   }
