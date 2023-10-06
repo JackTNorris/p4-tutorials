@@ -54,8 +54,9 @@ def calculate_packet_end_to_end(sent_at_times, received_at_times, generated_inde
             to "normalize" things by getting rid of the 0.017s. This is
             because I'm largely measuring the time betwen when the packet
             is discovered to be missing and when it is finally recovered
-            in-network. The 0.017s is not part of that time [rather, it is]
-            a part of the "missing data detection" strategy, so I have gotten rid of it
+            in-network. The 0.017s is not part of that time-- rather, it is
+            a part of the "missing data detection" strategy which isn't the
+            focus of this particular experiment.
 
             """
             while j in generated_indexes:
