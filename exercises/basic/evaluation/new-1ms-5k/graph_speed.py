@@ -41,7 +41,22 @@ def calculate_packet_end_to_end(sent_at_times, received_at_times, generated_inde
             j = i + 1
             """
             this logic accounts for 0.017s inflating the time, and gets rid of it for us
-            especiall for a string of missing packets, this is important
+            especially for a string of missing packets, this is important
+
+            Consider the following example:
+            ^ = packet sent
+            v = packet lost
+            [.017] = time between when consecutive packets are sent
+            ^ [.017] ^ [.017] ^ [.017] v [.017] v [.017] - [.017] ^
+
+            to accurately calculate the time between when packet # 4
+            was sent and when the recovered packet was received, I have
+            to "normalize" things by getting rid of the 0.017s. This is
+            because I'm largely measuring the time betwen when the packet
+            is discovered to be missing and when it is finally recovered
+            in-network. The 0.017s is not part of that time [rather, it is]
+            a part of the "missing data detection" strategy, so I have gotten rid of it
+
             """
             while j in generated_indexes:
                 missing_in_row_count += 1
