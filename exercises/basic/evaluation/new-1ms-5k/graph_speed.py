@@ -33,12 +33,24 @@ def parse_send_file(file_path):
 def calculate_packet_end_to_end(sent_at_times, received_at_times, generated_indexes, generated_only = True):
     #function to account for sleep time included for generated packets
     end_to_end_times = []
+    missing_in_row_count = 0
     for i in range(len(sent_at_times)):
         end_to_end_time = timedelta.total_seconds(received_at_times[i] - sent_at_times[i])
         if i in generated_indexes:
-            end_to_end_time -= sleep_time_seconds
+            missing_in_row_count = 1
+            j = i + 1
+            """
+            this logic accounts for 0.017s inflating the time, and gets rid of it for us
+            especiall for a string of missing packets, this is important
+            """
+            while j in generated_indexes:
+                missing_in_row_count += 1
+                j += 1
+            end_to_end_time -= sleep_time_seconds * missing_in_row_count
             if generated_only:
                 end_to_end_times.append(end_to_end_time)
+        else:
+            missing_in_row_count = 0
         if not generated_only:
             end_to_end_times.append(end_to_end_time)
     return end_to_end_times
@@ -66,6 +78,7 @@ if __name__ == "__main__":
         print("Max for " + str(i) + "%: " + str(mx))
 
 
+    
     ax.errorbar(x, y, yerr=errors, fmt='o')
     ax.plot(x, y, color="g")
     ax.scatter(x, y, color="b", s=30)
@@ -79,5 +92,6 @@ if __name__ == "__main__":
     plt.grid()
     plt.savefig("../figures/5k-packet-speed-1ms-generated-only.pdf", format="pdf")
     plt.show()
+    
 
 
